@@ -32,7 +32,7 @@ mvnw.cmd --settings settings.xml clean package
 После успешной сборки JAR-библиотека находится здесь:
 
 ```text
-target/oracle-plsql-unwrapper-0.1.0.jar
+target/oracle-plsql-unwrapper-0.1.1-SNAPSHOT.jar
 ```
 
 ## Использование
