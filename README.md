@@ -32,7 +32,7 @@ The build runs the tests: they compare the output byte by byte with the referenc
 After a successful build, the JAR library is located here:
 
 ```text
-target/oracle-plsql-unwrapper-0.1.0-SNAPSHOT.jar
+target/oracle-plsql-unwrapper-0.1.0.jar
 ```
 
 ## Usage
