@@ -2,13 +2,13 @@
 
 [Русская версия](README_ru.md)
 
-A library for restoring PL/SQL source code from the Oracle wrapped format V2 (Oracle 10g and later). The public API is in the `com.github.sftwnd.unwrap` package.
+A library for restoring PL/SQL source code from the Oracle wrapped format V2 (Oracle 10g and later). The public API is in the `com.github.sftwnd.oracle.unwrap` package, and the options and the exception that the formats share are in `com.github.sftwnd.oracle.unwrap.spi`.
 
-A unit of the format V1 (Oracle 7.2, 7.3, 8, 8i and 9i) is recognized, but unwrapping it is not implemented: `UnwrapException` reports it, with the contacts of the author, who provides the code that unwraps V1: ashindarev@gmail.com or [Andrey Shindarev on LinkedIn](https://www.linkedin.com/in/ashindarev/). A V2 unit records no PL/SQL version.
+A unit of the format V1 (Oracle 7.2, 7.3, 8, 8i and 9i) is recognized, but unwrapping it is not implemented: `UnwrapException` reports it, with the contacts of the author, who licenses the closed module that unwraps V1: ashindarev@gmail.com or [Andrey Shindarev on LinkedIn](https://www.linkedin.com/in/ashindarev/). A V2 unit records no PL/SQL version.
 
 ## Requirements
 
-- JDK 17 or newer.
+- JDK 8 or newer to run. To build, JDK 8 gives jars without JPMS descriptors, JDK 9 or newer jars with them.
 - Internet access the first time Maven and its plugins are downloaded.
 
 You do not need to install Maven separately: the project includes the Maven Wrapper.
@@ -18,31 +18,39 @@ You do not need to install Maven separately: the project includes the Maven Wrap
 From the project root, run:
 
 ```bash
-./mvnw --settings settings.xml clean package
+./mvnw clean package
 ```
 
 On Windows:
 
 ```bat
-mvnw.cmd --settings settings.xml clean package
+mvnw.cmd clean package
 ```
 
-The build runs the tests: they compare the output byte by byte with the reference files in `src/test/resources/samples`.
+The build runs the tests: they compare the output byte by byte with the reference files in `oracle-plsql-unwrap-v2/src/test/resources/samples`.
 
-After a successful build, the JAR library is located here:
+The project has three modules, and each builds a JAR in its `target` directory:
+
+- `oracle-plsql-unwrap-spi` — the contract of a wrapped format;
+- `oracle-plsql-unwrap-v2` — the format V2, a provider of the service `FormatUnwrapper`; it depends on the SPI only;
+- `oracle-plsql-unwrapper` — `Unwrapper` and the command line, with the format V2 only.
+
+The executable JAR with all the classes and the distribution, which holds it with the launchers, are here:
 
 ```text
-target/oracle-plsql-unwrapper-0.1.1-SNAPSHOT.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist.zip
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist/unwrapper
 ```
 
 ## Usage
 
-The entry point is `com.github.sftwnd.unwrap.Unwrapper`. The format of each wrapped unit is detected from its header; the formats are listed in `WrapFormat` (`V1` and `V2`), and only `V2` is unwrapped.
+The entry point is `com.github.sftwnd.oracle.unwrap.Unwrapper`. The format of each wrapped unit is detected from its header. The formats are services found on the class path or the module path, see [Modules, OSGi and services](#modules-osgi-and-services); this project has `V2`.
 
 To unwrap an SQL script, including all wrapped units it contains:
 
 ```java
-import com.github.sftwnd.unwrap.Unwrapper;
+import com.github.sftwnd.oracle.unwrap.Unwrapper;
 
 String wrappedScript = ...;
 String unwrappedScript = new Unwrapper().unwrapScript(wrappedScript);
@@ -57,17 +65,16 @@ The restored unit starts with the header of the wrapped unit. WRAP copies the `C
 To read and write SQL files in their original single-byte encoding:
 
 ```java
-import com.github.sftwnd.unwrap.Unwrapper;
+import com.github.sftwnd.oracle.unwrap.Unwrapper;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 
-Path input = Path.of("S.SQL");
-Path output = Path.of("S.SQ");
-String wrappedScript = Files.readString(input, StandardCharsets.ISO_8859_1);
+byte[] input = Files.readAllBytes(Paths.get("S.SQL"));
+String wrappedScript = new String(input, StandardCharsets.ISO_8859_1);
 String unwrappedScript = new Unwrapper().unwrapScript(wrappedScript);
-Files.writeString(output, unwrappedScript, StandardCharsets.ISO_8859_1);
+Files.write(Paths.get("S.SQ"), unwrappedScript.getBytes(StandardCharsets.ISO_8859_1));
 ```
 
 The text of a V2 unit is decoded in the character set the unit names, so a script with V2 units is written in an encoding that covers it, see [Format V2](#format-v2).
@@ -75,21 +82,22 @@ The text of a V2 unit is decoded in the character set the unit names, so a scrip
 Options are passed to the constructor, and `new Unwrapper()` uses `UnwrapOptions.defaults()`. The option `keepStrayCr` keeps a stray CR of a V2 text instead of replacing it with a space, see [Format V2](#format-v2):
 
 ```java
-import com.github.sftwnd.unwrap.UnwrapOptions;
-import com.github.sftwnd.unwrap.Unwrapper;
+import com.github.sftwnd.oracle.unwrap.spi.UnwrapOptions;
+import com.github.sftwnd.oracle.unwrap.Unwrapper;
 
 Unwrapper unwrapper = new Unwrapper(UnwrapOptions.defaults().withKeepStrayCr(true));
 ```
 
-The default of `keepStrayCr` is `false` unless the system property `com.github.sftwnd.unwrap.keepStrayCr` is `true`: with `-Dcom.github.sftwnd.unwrap.keepStrayCr=true` every `new Unwrapper()` keeps stray CRs, so an application can switch it without a change of its code. `withKeepStrayCr` sets the option whatever the property says.
+The default of `keepStrayCr` is `false` unless the system property `com.github.sftwnd.oracle.unwrap.keepStrayCr` is `true`: with `-Dcom.github.sftwnd.oracle.unwrap.keepStrayCr=true` every `new Unwrapper()` keeps stray CRs, so an application can switch it without a change of its code. `withKeepStrayCr` sets the option whatever the property says.
 
 Other `Unwrapper` operations:
 
 - `unwrap` — unwrap the first wrapped unit;
 - `unwrapUnits` — unwrap every wrapped unit and get its format, type and name. A V2 unit has `null` in the PL/SQL version, the PL/SQL compatibility group and `staticSqlAsText`, which only a V1 unit records;
-- `supports` — check whether the text contains a wrapped unit of a supported format.
+- `supports` — check whether the text contains a wrapped unit of a known format;
+- `formats` — the names of the formats this unwrapper restores and what each one covers.
 
-Errors in wrapped content are reported as `UnwrapException`.
+Errors in wrapped content are reported as `UnwrapException` of the package `com.github.sftwnd.oracle.unwrap.spi`.
 
 To compare the result byte by byte with a reference file:
 
@@ -98,6 +106,42 @@ cmp S.SQ /path/to/U.SQL
 ```
 
 If `cmp` prints nothing and exits with code 0, the files are identical.
+
+## Command line
+
+The distribution starts the unwrapper from the command line; the script goes from the first file to the second, or from the standard input to the standard output:
+
+```bash
+unwrapper/bin/unwrapper S.SQL S.SQ
+```
+
+`--help` lists the wrapped formats of this distribution, here `V2` only. `--input-encoding` and `--output-encoding` set the encodings, ISO-8859-1 by default, so the text outside the units stays byte for byte; a restored text that does not fit the output encoding is an error, and nothing is written. `--keep-stray-cr` is the option `keepStrayCr`, see [Format V2](#format-v2). The exit code is 0, 1 if the script cannot be restored, 2 if the arguments are wrong.
+
+`bin/unwrapper` (`bin/unwrapper.cmd` on Windows) runs the executable JAR on the JDK of `JAVA_HOME`, or on `java` from `PATH`, and takes options of the JVM from `JAVA_OPTS`.
+
+The build also leaves the JARs of the modules in a directory of `target`. On JDK 9 and later the unwrapper starts from them on the module path, where the formats are found through `provides`:
+
+```bash
+java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-modules --module com.github.sftwnd.oracle.unwrap/com.github.sftwnd.oracle.unwrap.cli.UnwrapperCli --help
+```
+
+The executable JAR needs nothing next to it and runs on the class path of any JDK; the distribution has it at its root too:
+
+```bash
+java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar S.SQL S.SQ
+```
+
+## Modules, OSGi and services
+
+The classes are at the level of Java 8. A build on JDK 9 or later adds the JPMS descriptor to each jar in `META-INF/versions/9`, where JDK 8 does not see it. Every jar is an OSGi bundle as well; its bundle symbolic name is the name of its module:
+
+| Artifact                    | JPMS module and bundle                | Exports                               |
+|-----------------------------|---------------------------------------|---------------------------------------|
+| `oracle-plsql-unwrap-spi`   | `com.github.sftwnd.oracle.unwrap.spi` | `com.github.sftwnd.oracle.unwrap.spi` |
+| `oracle-plsql-unwrap-v2`    | `com.github.sftwnd.oracle.unwrap.v2`  | nothing, only the service             |
+| `oracle-plsql-unwrapper`    | `com.github.sftwnd.oracle.unwrap`     | `com.github.sftwnd.oracle.unwrap`     |
+
+A format is a provider of the service `com.github.sftwnd.oracle.unwrap.spi.FormatUnwrapper`, and `Unwrapper` finds the providers with `ServiceLoader`: through `META-INF/services` on the class path, through `provides` on the module path, and through the OSGi ServiceLoader Mediator in an OSGi container, which therefore needs a mediator such as Apache Aries SPI Fly. `Unwrapper.formats()` lists what it has found. See [ADR 0011](docs/adr/0011-modules-and-format-services.md) and [ADR 0012](docs/adr/0012-java-8-modules-and-osgi.md).
 
 ## Format V2
 
@@ -121,19 +165,17 @@ WRAP 10.1.0.3 gives the same wrapped file too. It keeps more of the source than 
 
 WRAP removes `REM` lines, `--` comment lines and empty lines between the statements outside the units, so such a line stands in a wrapped file only if it was added after wrapping, as the `Rem drv:` lines of some Enterprise Manager files are, or the block of `Rem` lines and the empty lines around the statements of the `prvtqopi` and `prvtsqlpatch` files. The restored script keeps it, as all text outside the units, and wrapping the script again gives the file without it. Inside an anonymous block WRAP 10.2 and later keep empty lines and `REM` lines.
 
+What WRAP of each release from 10.1.0.3 to 23.26.1 writes, from the layout of a unit and its header to the line endings and the text outside the units, is described in [WRAP of the format V2: behavior by release](docs/wrap-v2-behavior.md).
+
 ## License
 
-The library is distributed under the [GNU Affero General Public License, version 3](LICENSE) (AGPL-3.0-only). Anyone who
-uses, modifies or distributes it, or lets users interact with it over a network, must make the source code of the
-resulting work available under the same license.
+The library is distributed under the [BSD 3-Clause License](LICENSE) (BSD-3-Clause): it can be used, changed and redistributed, in open and closed products alike, as long as the copyright notice and the license text are kept. The name of the copyright holder cannot be used to promote derived products without written permission.
 
-A commercial license without the AGPL obligations, for use in closed-source products and services, is available from the
-copyright holder under a separate agreement: write to ashindarev@gmail.com or contact
-[Andrey Shindarev on LinkedIn](https://www.linkedin.com/in/ashindarev/).
+The format V1 is a closed module and is not covered by this license.
 
 ## Contributing
 
 The project does not accept third-party contributions: pull requests and patches from outside are closed without review.
 Bug reports and questions are welcome as issues, but the code is written by the copyright holder only. This keeps all
-rights to the code with one holder and makes the commercial license possible. The AGPL-3.0 gives you the right to fork
-the project and develop the fork under the same license.
+rights to the code with one holder. The BSD 3-Clause License gives you the right to fork the project and develop the
+fork.
