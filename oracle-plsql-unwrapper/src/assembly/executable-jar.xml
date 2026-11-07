@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    The executable jar of an unwrapper. Its manifest is its own: the manifest of a part would make it look like that part,
+    a bundle, a module or a jar with neighbours. The providers of the formats are merged, and so are the licenses, which the
+    SPI and the formats leave out so that the text of each license stays once.
+-->
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 https://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>all</id>
+    <formats>
+        <format>jar</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <containerDescriptorHandlers>
+        <containerDescriptorHandler>
+            <handlerName>metaInf-services</handlerName>
+        </containerDescriptorHandler>
+        <containerDescriptorHandler>
+            <handlerName>file-aggregator</handlerName>
+            <configuration>
+                <filePattern>META-INF/LICENSE</filePattern>
+                <outputPath>META-INF/LICENSE</outputPath>
+            </configuration>
+        </containerDescriptorHandler>
+    </containerDescriptorHandlers>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <excludes>
+                <exclude>com.github.sftwnd:oracle-plsql-unwrap-*</exclude>
+            </excludes>
+            <unpack>true</unpack>
+            <unpackOptions>
+                <excludes>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                    <exclude>META-INF/maven/**</exclude>
+                    <exclude>META-INF/versions/**</exclude>
+                    <exclude>bin/**</exclude>
+                </excludes>
+            </unpackOptions>
+            <scope>runtime</scope>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <includes>
+                <include>com.github.sftwnd:oracle-plsql-unwrap-*</include>
+            </includes>
+            <unpack>true</unpack>
+            <unpackOptions>
+                <excludes>
+                    <exclude>META-INF/LICENSE</exclude>
+                    <exclude>META-INF/MANIFEST.MF</exclude>
+                    <exclude>META-INF/maven/**</exclude>
+                    <exclude>META-INF/versions/**</exclude>
+                </excludes>
+            </unpackOptions>
+            <scope>runtime</scope>
+        </dependencySet>
+    </dependencySets>
+</assembly>

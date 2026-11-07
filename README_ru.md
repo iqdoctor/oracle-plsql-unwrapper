@@ -2,13 +2,13 @@
 
 [English version](README.md)
 
-Библиотека для восстановления исходного PL/SQL-кода из Oracle wrapped-формата V2 (Oracle 10g и новее). Публичный API находится в пакете `com.github.sftwnd.unwrap`.
+Библиотека для восстановления исходного PL/SQL-кода из Oracle wrapped-формата V2 (Oracle 10g и новее). Публичный API находится в пакете `com.github.sftwnd.oracle.unwrap`, а общие с форматами параметры и исключение — в `com.github.sftwnd.oracle.unwrap.spi`.
 
-Единица формата V1 (Oracle 7.2, 7.3, 8, 8i и 9i) распознаётся, но её восстановление не реализовано: о ней сообщает `UnwrapException` с контактами автора, у которого можно получить код восстановления V1: ashindarev@gmail.com или [Андрей Шиндарев в LinkedIn](https://www.linkedin.com/in/ashindarev/). В единице V2 версия PL/SQL не записана.
+Единица формата V1 (Oracle 7.2, 7.3, 8, 8i и 9i) распознаётся, но её восстановление не реализовано: о ней сообщает `UnwrapException` с контактами автора, у которого можно получить лицензию на закрытый модуль восстановления V1: ashindarev@gmail.com или [Андрей Шиндарев в LinkedIn](https://www.linkedin.com/in/ashindarev/). В единице V2 версия PL/SQL не записана.
 
 ## Требования
 
-- JDK 17 или новее.
+- JDK 8 или новее для запуска. Сборка на JDK 8 даёт jar без дескрипторов JPMS, на JDK 9 или новее — с ними.
 - Доступ в интернет при первой загрузке Maven и его плагинов.
 
 Устанавливать Maven отдельно не нужно: проект содержит Maven Wrapper.
@@ -18,31 +18,39 @@
 Из корня проекта выполните:
 
 ```bash
-./mvnw --settings settings.xml clean package
+./mvnw clean package
 ```
 
 В Windows:
 
 ```bat
-mvnw.cmd --settings settings.xml clean package
+mvnw.cmd clean package
 ```
 
-Сборка запускает тесты: они побайтово сравнивают результат с эталонными файлами из `src/test/resources/samples`.
+Сборка запускает тесты: они побайтово сравнивают результат с эталонными файлами из `oracle-plsql-unwrap-v2/src/test/resources/samples`.
 
-После успешной сборки JAR-библиотека находится здесь:
+В проекте три модуля, и каждый собирает JAR в своём каталоге `target`:
+
+- `oracle-plsql-unwrap-spi` — контракт wrapped-формата;
+- `oracle-plsql-unwrap-v2` — формат V2, поставщик сервиса `FormatUnwrapper`; зависит только от SPI;
+- `oracle-plsql-unwrapper` — `Unwrapper` и командная строка, только с форматом V2.
+
+Исполняемый JAR со всеми классами и дистрибутив, который содержит его вместе со скриптами запуска, находятся здесь:
 
 ```text
-target/oracle-plsql-unwrapper-0.1.1-SNAPSHOT.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist.zip
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist/unwrapper
 ```
 
 ## Использование
 
-Точка входа — `com.github.sftwnd.unwrap.Unwrapper`. Формат каждой wrapped-единицы определяется по её заголовку; форматы перечислены в `WrapFormat` (`V1` и `V2`), восстанавливается только `V2`.
+Точка входа — `com.github.sftwnd.oracle.unwrap.Unwrapper`. Формат каждой wrapped-единицы определяется по её заголовку. Форматы — это сервисы, которые находятся на classpath или module path, см. [Модули, OSGi и сервисы](#модули-osgi-и-сервисы); в этом проекте есть `V2`.
 
 Для распаковки SQL-скрипта, включая все содержащиеся в нём wrapped-единицы:
 
 ```java
-import com.github.sftwnd.unwrap.Unwrapper;
+import com.github.sftwnd.oracle.unwrap.Unwrapper;
 
 String wrappedScript = ...;
 String unwrappedScript = new Unwrapper().unwrapScript(wrappedScript);
@@ -57,17 +65,16 @@ String unwrappedScript = new Unwrapper().unwrapScript(wrappedScript);
 Для чтения и записи SQL-файлов в исходной однобайтовой кодировке:
 
 ```java
-import com.github.sftwnd.unwrap.Unwrapper;
+import com.github.sftwnd.oracle.unwrap.Unwrapper;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 
-Path input = Path.of("S.SQL");
-Path output = Path.of("S.SQ");
-String wrappedScript = Files.readString(input, StandardCharsets.ISO_8859_1);
+byte[] input = Files.readAllBytes(Paths.get("S.SQL"));
+String wrappedScript = new String(input, StandardCharsets.ISO_8859_1);
 String unwrappedScript = new Unwrapper().unwrapScript(wrappedScript);
-Files.writeString(output, unwrappedScript, StandardCharsets.ISO_8859_1);
+Files.write(Paths.get("S.SQ"), unwrappedScript.getBytes(StandardCharsets.ISO_8859_1));
 ```
 
 Текст единицы V2 декодируется в кодировке, которую называет единица, поэтому скрипт с единицами V2 записывается в кодировке, которая его покрывает, см. [Формат V2](#формат-v2).
@@ -75,21 +82,22 @@ Files.writeString(output, unwrappedScript, StandardCharsets.ISO_8859_1);
 Параметры передаются конструктору, а `new Unwrapper()` берёт `UnwrapOptions.defaults()`. Параметр `keepStrayCr` сохраняет случайный CR текста V2 вместо замены его пробелом, см. [Формат V2](#формат-v2):
 
 ```java
-import com.github.sftwnd.unwrap.UnwrapOptions;
-import com.github.sftwnd.unwrap.Unwrapper;
+import com.github.sftwnd.oracle.unwrap.spi.UnwrapOptions;
+import com.github.sftwnd.oracle.unwrap.Unwrapper;
 
 Unwrapper unwrapper = new Unwrapper(UnwrapOptions.defaults().withKeepStrayCr(true));
 ```
 
-По умолчанию `keepStrayCr` равен `false`, если системное свойство `com.github.sftwnd.unwrap.keepStrayCr` не равно `true`: с `-Dcom.github.sftwnd.unwrap.keepStrayCr=true` каждый `new Unwrapper()` сохраняет случайные CR, поэтому приложение может включить это без изменения своего кода. `withKeepStrayCr` задаёт параметр независимо от свойства.
+По умолчанию `keepStrayCr` равен `false`, если системное свойство `com.github.sftwnd.oracle.unwrap.keepStrayCr` не равно `true`: с `-Dcom.github.sftwnd.oracle.unwrap.keepStrayCr=true` каждый `new Unwrapper()` сохраняет случайные CR, поэтому приложение может включить это без изменения своего кода. `withKeepStrayCr` задаёт параметр независимо от свойства.
 
 Дополнительные операции `Unwrapper`:
 
 - `unwrap` — распаковать первую wrapped-единицу;
 - `unwrapUnits` — распаковать все wrapped-единицы и получить формат, тип и имя каждой. У единицы V2 версия PL/SQL, группа совместимости PL/SQL и `staticSqlAsText` — `null`: их записывает только единица V1;
-- `supports` — проверить, есть ли в тексте wrapped-единица поддерживаемого формата.
+- `supports` — проверить, есть ли в тексте wrapped-единица известного формата;
+- `formats` — имена форматов, которые восстанавливает этот unwrapper, и что каждый из них охватывает.
 
-Ошибки в содержимом wrapped-единиц сообщаются исключением `UnwrapException`.
+Ошибки в содержимом wrapped-единиц сообщаются исключением `UnwrapException` из пакета `com.github.sftwnd.oracle.unwrap.spi`.
 
 Для побайтового сравнения результата с эталонным файлом:
 
@@ -98,6 +106,42 @@ cmp S.SQ /path/to/U.SQL
 ```
 
 Если `cmp` ничего не вывела и завершилась с кодом 0, файлы полностью совпадают.
+
+## Командная строка
+
+Дистрибутив запускает unwrapper из командной строки; скрипт идёт из первого файла во второй или со стандартного ввода на стандартный вывод:
+
+```bash
+unwrapper/bin/unwrapper S.SQL S.SQ
+```
+
+`--help` перечисляет wrapped-форматы этого дистрибутива, здесь только `V2`. `--input-encoding` и `--output-encoding` задают кодировки, по умолчанию ISO-8859-1, поэтому текст вне единиц сохраняется байт в байт; восстановленный текст, не помещающийся в кодировку вывода, — ошибка, и ничего не записывается. `--keep-stray-cr` — это параметр `keepStrayCr`, см. [Формат V2](#формат-v2). Код завершения — 0, 1, если скрипт нельзя восстановить, 2, если неверны аргументы.
+
+`bin/unwrapper` (`bin/unwrapper.cmd` в Windows) запускает исполняемый JAR на JDK из `JAVA_HOME` или на `java` из `PATH` и берёт параметры JVM из `JAVA_OPTS`.
+
+Сборка оставляет JAR модулей ещё и в каталоге `target`. На JDK 9 и новее unwrapper запускается из них на module path, где форматы находятся через `provides`:
+
+```bash
+java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-modules --module com.github.sftwnd.oracle.unwrap/com.github.sftwnd.oracle.unwrap.cli.UnwrapperCli --help
+```
+
+Исполняемому JAR ничего рядом не нужно, он работает на classpath любого JDK; он есть и в корне дистрибутива:
+
+```bash
+java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar S.SQL S.SQ
+```
+
+## Модули, OSGi и сервисы
+
+Классы — на уровне Java 8. Сборка на JDK 9 или новее добавляет в каждый jar дескриптор JPMS, в `META-INF/versions/9`, где JDK 8 его не видит. Каждый jar — ещё и бандл OSGi; символическое имя бандла совпадает с именем модуля:
+
+| Артефакт                    | Модуль JPMS и бандл                   | Экспортирует                          |
+|-----------------------------|---------------------------------------|---------------------------------------|
+| `oracle-plsql-unwrap-spi`   | `com.github.sftwnd.oracle.unwrap.spi` | `com.github.sftwnd.oracle.unwrap.spi` |
+| `oracle-plsql-unwrap-v2`    | `com.github.sftwnd.oracle.unwrap.v2`  | ничего, только сервис                 |
+| `oracle-plsql-unwrapper`    | `com.github.sftwnd.oracle.unwrap`     | `com.github.sftwnd.oracle.unwrap`     |
+
+Формат — поставщик сервиса `com.github.sftwnd.oracle.unwrap.spi.FormatUnwrapper`, а `Unwrapper` находит поставщиков через `ServiceLoader`: по `META-INF/services` на classpath, по `provides` на module path и через OSGi ServiceLoader Mediator в контейнере OSGi, которому поэтому нужен посредник, например Apache Aries SPI Fly. `Unwrapper.formats()` перечисляет найденное. См. [ADR 0011](docs/adr/0011-modules-and-format-services_ru.md) и [ADR 0012](docs/adr/0012-java-8-modules-and-osgi_ru.md).
 
 ## Формат V2
 
@@ -121,19 +165,16 @@ WRAP 10.1.0.3 тоже даёт тот же wrapped-файл. Исходник �
 
 Строки `REM`, строки комментария `--` и пустые строки между операторами вне единиц WRAP удаляет, поэтому такая строка бывает в wrapped-файле, только если её добавили после завёртывания, как строки `Rem drv:` в некоторых файлах Enterprise Manager или блок строк `Rem` и пустые строки вокруг операторов в файлах `prvtqopi` и `prvtsqlpatch`. Восстановленный скрипт её сохраняет, как и весь текст вне единиц, а повторный wrap даёт файл без неё. Внутри анонимного блока WRAP 10.2 и новее сохраняют пустые строки и строки `REM`.
 
+Что пишет WRAP каждого выпуска с 10.1.0.3 по 23.26.1, от раскладки единицы и её заголовка до окончаний строк и текста вне единиц, описано в [WRAP формата V2: поведение по выпускам](docs/wrap-v2-behavior_ru.md).
+
 ## Лицензия
 
-Библиотека распространяется на условиях [GNU Affero General Public License версии 3](LICENSE) (AGPL-3.0-only). Каждый,
-кто использует, изменяет или распространяет её, а также предоставляет пользователям доступ к ней по сети, обязан открыть
-исходный код получившейся работы на тех же условиях.
+Библиотека распространяется на условиях [лицензии BSD 3-Clause](LICENSE) (BSD-3-Clause): её можно использовать, изменять и распространять, в открытых и закрытых продуктах, если сохраняются уведомление об авторских правах и текст лицензии. Имя правообладателя нельзя использовать для продвижения производных продуктов без письменного разрешения.
 
-Коммерческая лицензия без обязательств AGPL, для закрытых продуктов и сервисов, предоставляется правообладателем по
-отдельному соглашению: напишите на ashindarev@gmail.com или свяжитесь с
-[Андреем Шиндаревым в LinkedIn](https://www.linkedin.com/in/ashindarev/).
+Формат V1 — закрытый модуль, и эта лицензия на него не распространяется.
 
 ## Участие в разработке
 
 Проект не принимает сторонний код: pull request и патчи извне закрываются без рассмотрения. Сообщения об ошибках и
 вопросы приветствуются в виде issue, но код пишет только правообладатель. Так все права на код остаются у одного
-владельца, а это делает возможной коммерческую лицензию. AGPL-3.0 даёт право сделать форк проекта и развивать его на тех
-же условиях.
+владельца. Лицензия BSD 3-Clause даёт право сделать форк проекта и развивать его.
