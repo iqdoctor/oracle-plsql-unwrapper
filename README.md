@@ -58,9 +58,9 @@ The project has three modules, and each builds a JAR in its `target` directory:
 The executable JAR with all the classes and the distribution, which holds it with the launchers, are here:
 
 ```text
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist.zip
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist/unwrapper
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-all.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-dist.zip
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-dist/unwrapper
 ```
 
 ## Usage
@@ -160,7 +160,7 @@ java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-mo
 The executable JAR needs nothing next to it and runs on the class path of any JDK; the distribution has it at its root too:
 
 ```bash
-java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar S.SQL S.SQ
+java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-all.jar S.SQL S.SQ
 ```
 
 ## Modules, OSGi and services
