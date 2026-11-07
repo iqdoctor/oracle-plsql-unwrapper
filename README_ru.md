@@ -58,9 +58,9 @@ JAVA_HOME=/path/to/graalvm ./mvnw -Pnative,native-linux clean verify
 Исполняемый JAR со всеми классами и дистрибутив, который содержит его вместе со скриптами запуска, находятся здесь:
 
 ```text
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist.zip
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist/unwrapper
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-all.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-dist.zip
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-dist/unwrapper
 ```
 
 ## Использование
@@ -160,7 +160,7 @@ java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-mo
 Исполняемому JAR ничего рядом не нужно, он работает на classpath любого JDK; он есть и в корне дистрибутива:
 
 ```bash
-java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar S.SQL S.SQ
+java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.1-SNAPSHOT-all.jar S.SQL S.SQ
 ```
 
 ## Модули, OSGi и сервисы
