@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Oracle PL/SQL Unwrapper — восстановление исходного кода wrapped PL/SQL</title>
+<meta name="description" content="Открытый инструмент на Java для распаковки PL/SQL, запакованного Oracle 10g+. Код Oracle 7.2–9.2 — по индивидуальному запросу, на коммерческой основе, при наличии у вас прав на код.">
+<meta name="robots" content="index, follow">
+<meta name="author" content="Andrey Shindarev">
+<meta name="theme-color" content="#F4F3EE">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2312161C'/%3E%3Cpath d='M40 14 24 50' stroke='%23F0A878' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Oracle PL/SQL Unwrapper — восстановление исходного кода wrapped PL/SQL">
+<meta property="og:description" content="Открытый инструмент на Java для распаковки PL/SQL, запакованного Oracle 10g+. Код Oracle 7.2–9.2 — по индивидуальному запросу, на коммерческой основе, при наличии у вас прав на код.">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Oracle PL/SQL Unwrapper — восстановление исходного кода wrapped PL/SQL">
+<meta name="twitter:description" content="Открытый инструмент на Java для распаковки PL/SQL, запакованного Oracle 10g+. Код Oracle 7.2–9.2 — по индивидуальному запросу, на коммерческой основе, при наличии у вас прав на код.">
+<link rel="canonical" href="https://sftwnd.github.io/oracle-plsql-unwrapper/ru/">
+<link rel="alternate" hreflang="en" href="https://sftwnd.github.io/oracle-plsql-unwrapper/">
+<link rel="alternate" hreflang="ru" href="https://sftwnd.github.io/oracle-plsql-unwrapper/ru/">
+<link rel="alternate" hreflang="x-default" href="https://sftwnd.github.io/oracle-plsql-unwrapper/">
+<meta property="og:url" content="https://sftwnd.github.io/oracle-plsql-unwrapper/ru/">
+<meta property="og:image" content="https://sftwnd.github.io/oracle-plsql-unwrapper/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:image" content="https://sftwnd.github.io/oracle-plsql-unwrapper/og-image.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Oracle PL/SQL Unwrapper", "applicationCategory": "DeveloperApplication", "operatingSystem": "Java", "description": "Открытый инструмент на Java для распаковки PL/SQL, запакованного Oracle 10g+. Код Oracle 7.2–9.2 — по индивидуальному запросу, на коммерческой основе, при наличии у вас прав на код.", "inLanguage": "ru", "codeRepository": "https://github.com/sftwnd/oracle-plsql-unwrap", "author": {"@type": "Person", "name": "Andrey Shindarev", "url": "https://www.linkedin.com/in/ashindarev/"}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:#F4F3EE;color:#12161C;line-height:1.55}
+a{color:#12161C}a:hover{color:#9A3412}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:1120px;margin:0 auto;padding:0 40px}
+.nav{border-bottom:1px solid #DAD7CC}
+.nav .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;padding-bottom:18px}
+.logo{font-weight:500;font-size:16px;text-decoration:none}
+.logo span{color:#9A3412}
+.menu{display:flex;flex-wrap:wrap;gap:24px;font-size:15px;align-items:center}
+.menu a{text-decoration:none;padding:10px 0}
+.lang{border:1.5px solid #12161C;border-radius:6px;padding:6px 12px!important;font-weight:600;font-size:14px}
+.hero{display:flex;flex-wrap:wrap;gap:56px;align-items:center;padding:88px 40px 72px}
+.hero>div{flex:1 1 440px;min-width:0}
+.eyebrow{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#9A3412}
+h1{margin:16px 0 24px;font-size:54px;line-height:1.08;font-weight:700;letter-spacing:-.02em}
+h2{margin:0;font-size:36px;letter-spacing:-.01em}
+h3{margin:8px 0;font-size:20px}
+p{margin:0;color:#3F444B}
+.lead{font-size:19px}
+.btns{display:flex;flex-wrap:wrap;gap:12px;padding-top:28px}
+.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border-radius:6px;font-weight:600;text-decoration:none}
+.btn.dark{background:#12161C;color:#F4F3EE}.btn.dark:hover{color:#F0A878}
+.btn.line{border:1.5px solid #12161C}
+.code{background:#12161C;border-radius:10px;padding:24px;font-size:13px;line-height:1.7;color:#E6E3DA;overflow-x:auto}
+.code pre{margin:0;font:inherit}
+.code .c{color:#A8A59B;font-size:12px;margin-bottom:8px}
+.code .c2{color:#F0A878;font-size:12px;margin-bottom:8px}
+.code hr{border:0;height:1px;background:#343A44;margin:18px 0}
+section{border-top:1px solid #DAD7CC}
+section.alt{background:#E9E7DD;border-bottom:1px solid #DAD7CC}
+section .wrap{padding-top:80px;padding-bottom:80px;display:flex;flex-direction:column;gap:40px}
+.row{display:flex;flex-wrap:wrap;gap:24px}
+.row>*{flex:1 1 300px;min-width:0}
+.card{padding:28px;background:#fff;border:1px solid #DAD7CC;border-radius:8px}
+.num{color:#9A3412;font-size:14px}
+.tier{padding:36px;border-radius:10px;display:flex;flex-direction:column;gap:16px;flex-basis:440px}
+.tier.light{background:#fff;border:1px solid #C9C6B9}
+.tier.darkt{background:#12161C;color:#F4F3EE}
+.tier .big{font-size:40px;font-weight:700;letter-spacing:-.02em}
+.tier.darkt p{color:#D6D3C8}
+.tier .btn{align-self:flex-start;min-height:44px;padding:0 20px}
+.tier .btn.inv{background:#F4F3EE;color:#12161C}
+.tier .tag.d{color:#F0A878}
+.tag{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#9A3412}
+.step .n{font-size:28px;color:#9A3412}
+.step{display:flex;flex-direction:column;gap:8px}
+.split{flex-direction:row!important;flex-wrap:wrap;gap:56px!important}
+.split>div{flex:1 1 380px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.note{padding:20px 24px;background:#fff;border:1px solid #C9C6B9;border-radius:8px}
+.note b{display:block;margin-bottom:4px}
+.note span{color:#3F444B}
+.contact a.big{display:flex;align-items:center;min-height:56px;padding:0 24px;border-radius:6px;font-weight:600;text-decoration:none}
+.contact a.big.dark{background:#12161C;color:#F4F3EE;font-size:15px}
+.contact a.big.line{border:1.5px solid #12161C}
+footer{border-top:1px solid #DAD7CC;font-size:14px;color:#55595F}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;padding-top:28px;padding-bottom:28px}
+@media(max-width:640px){h1{font-size:36px}h2{font-size:28px}.wrap,.hero{padding-left:20px;padding-right:20px}.hero{padding-top:56px}.tier .big{font-size:32px}}
+:focus-visible{outline:3px solid #9A3412;outline-offset:2px}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+<a class="logo mono" href="./">unwrapper<span>/</span>plsql</a>
+<nav class="menu" aria-label="Main">
+<a href="#why">Возможности</a><a href="#versions">Версии Oracle</a><a href="#terms">Условия</a><a href="#contact">Контакты</a>
+<a class="lang" href="../" hreflang="en" lang="en">English</a>
+</nav></div></header>
+<main>
+<div class="wrap hero">
+<div>
+<div class="eyebrow mono">Oracle PL/SQL · wrap → исходный код</div>
+<h1>Распаковка PL/SQL, запакованного утилитой wrap</h1>
+<p class="lead">Открытый инструмент на Java возвращает читаемый исходный код PL/SQL из объектов, запакованных Oracle 10g и новее. Код Oracle 7.2–9.2 восстанавливаем по индивидуальному запросу на коммерческой основе — при условии, что у вас есть права на этот код.</p>
+<div class="btns"><a class="btn dark" href="https://github.com/sftwnd/oracle-plsql-unwrap">Открыть на GitHub</a><a class="btn line" href="#contact">Запрос на Oracle 7.2–9.2</a></div>
+</div>
+<div class="code mono" aria-hidden="true">
+<div class="c">-- было (иллюстрация)</div>
+<pre style="color:#A8A59B">CREATE OR REPLACE PROCEDURE calc_tax wrapped
+a000000
+b2
+abcd
+abcd
+...
+7a 9f2Kx0c3VhZ1pQ4mWb
+8e1Qd7LsT0nYhA5uX2o=</pre>
+<hr>
+<div class="c2">-- стало (иллюстрация)</div>
+<pre>CREATE OR REPLACE PROCEDURE calc_tax (
+  p_amount IN NUMBER,
+  p_rate   IN NUMBER
+) IS
+BEGIN
+  -- читаемый PL/SQL
+  ...
+END calc_tax;</pre>
+</div>
+</div>
+
+<section id="why"><div class="wrap"><h2>Зачем это нужно</h2><div class="row"><div class="card"><div class="num mono">01</div><h3>Потеряны исходники</h3><p>В базе остался только wrapped-пакет, а исходный код утрачен. Возвращаем текст, с которым можно снова работать.</p></div><div class="card"><div class="num mono">02</div><h3>Поиск ошибки в унаследованном коде</h3><p>Расчёт ведёт себя неожиданно, а посмотреть, что внутри, нельзя. Читаемый код позволяет найти причину.</p></div><div class="card"><div class="num mono">03</div><h3>Миграция и сопровождение</h3><p>Перенос старых систем на новые версии Oracle или другие платформы требует понимать, что именно делает код.</p></div></div></div></section>
+
+<section id="versions" class="alt"><div class="wrap"><h2>Две линейки поддержки</h2>
+<div class="row">
+<div class="tier light"><div class="tag mono">Открытый код</div><div class="big">Oracle 10g+</div><p>Распаковка PL/SQL, запакованного Oracle 10g и новее. Исходный код на Java открыт и доступен на GitHub — запускайте самостоятельно.</p><a class="btn dark" href="https://github.com/sftwnd/oracle-plsql-unwrap">github.com/sftwnd/oracle-plsql-unwrap</a></div>
+<div class="tier darkt"><div class="tag d mono">По индивидуальному запросу</div><div class="big">Oracle 7.2 – 9.2</div><p>Для старых версий используется отдельный формат упаковки, поэтому восстановление выполняется под вашу задачу — на коммерческой основе и при условии, что вы вправе работать с этим кодом.</p><a class="btn inv" href="#contact">Отправить запрос</a></div>
+</div></div></section>
+
+<section><div class="wrap"><h2>Как это работает</h2><div class="row"><div class="step"><div class="n mono">1</div><h3 style="margin:0">Берёте wrapped-код</h3><p>Файл или объект базы данных, запакованный утилитой wrap.</p></div><div class="step"><div class="n mono">2</div><h3 style="margin:0">Запускаете unwrapper</h3><p>Для Oracle 10g+ — самостоятельно из открытого репозитория. Для 7.2–9.2 — присылаете запрос.</p></div><div class="step"><div class="n mono">3</div><h3 style="margin:0">Получаете исходный PL/SQL</h3><p>Читаемый текст, который можно изучать, править и компилировать. Комментарии при упаковке не сохраняются, поэтому в результате их нет.</p></div></div></div></section>
+
+<section id="terms" class="alt"><div class="wrap split">
+<div><h2>Условия и права на код</h2><p style="font-size:17px">Инструмент предназначен для законной работы с кодом, на который у вас есть права: ваши собственные разработки, код заказчика, унаследованные системы вашей компании.</p></div>
+<div style="gap:20px"><div class="note"><b>Нужны права на код</b><span>По запросу на Oracle 7.2–9.2 мы работаем, если вы обладаете правом на распаковку этого кода и можете это подтвердить.</span></div><div class="note"><b>Служебные пакеты Oracle исключены</b><span>Лицензия Oracle запрещает обратную разработку собственных внутренних пакетов, поэтому такие запросы мы не принимаем.</span></div><div class="note"><b>Стоимость — по запросу</b><span>Зависит от версии Oracle и объёма кода. Ответим после знакомства с задачей.</span></div></div>
+</div></section>
+
+<section id="contact" class="contact"><div class="wrap split" style="align-items:center">
+<div><h2>Расскажите о задаче</h2><p style="font-size:17px">Напишите версию Oracle, примерный объём кода и на каком основании вы владеете правами на него. Ответ придёт на ту же почту.</p></div>
+<div style="gap:12px">
+<a class="big dark mono" href="mailto:ashindarev@gmail.com?subject=Oracle%20PL%2FSQL%20unwrap">ashindarev@gmail.com</a>
+<a class="big line" href="https://www.linkedin.com/in/ashindarev/">LinkedIn — Andrey Shindarev</a>
+<a class="big line" href="https://habr.com/ru/articles/1104428/">Статья на Хабре об устройстве wrap</a>
+</div></div></section>
+</main>
+<footer><div class="wrap"><div>© 2026 Андрей Шиндарев · SoftWind Labs</div><div>Oracle — товарный знак Oracle Corporation. Проект с ней не связан.</div></div></footer>
+</body>
+</html>
