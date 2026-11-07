@@ -2,6 +2,7 @@
 
 [![Java 8+](https://img.shields.io/badge/Java-8%2B-blue)](#модули-osgi-и-сервисы)
 [![JPMS](https://img.shields.io/badge/JPMS-named%20modules-blue)](#модули-osgi-и-сервисы)
+[![OSGi](https://img.shields.io/badge/OSGi-bundles-blue)](#модули-osgi-и-сервисы)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sftwnd_oracle_plsql_unwrapper&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sftwnd_oracle_plsql_unwrapper)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sftwnd_oracle_plsql_unwrapper&metric=coverage)](https://sonarcloud.io/summary/new_code?id=sftwnd_oracle_plsql_unwrapper)
 [![Build](https://github.com/sftwnd/oracle-plsql-unwrapper/actions/workflows/build.yml/badge.svg)](https://github.com/sftwnd/oracle-plsql-unwrapper/actions/workflows/build.yml)
