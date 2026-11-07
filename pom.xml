@@ -11,6 +11,7 @@
 
     <name>Oracle PL/SQL Unwrapper</name>
     <description>Libraries for restoring Oracle wrapped PL/SQL source code: the format SPI, the format V2 and the unwrapper</description>
+    <url>https://github.com/sftwnd/oracle-plsql-unwrapper</url>
 
     <licenses>
         <license>
@@ -19,6 +20,22 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <developers>
+        <developer>
+            <id>ashindarev</id>
+            <name>Andrey Shindarev</name>
+            <email>ashindarev@gmail.com</email>
+            <timezone>Europe/Moscow</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/sftwnd/oracle-plsql-unwrapper</url>
+        <connection>scm:git:https://github.com/sftwnd/oracle-plsql-unwrapper.git</connection>
+        <developerConnection>scm:git:git@github.com:sftwnd/oracle-plsql-unwrapper.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <modules>
         <module>oracle-plsql-unwrap-spi</module>
@@ -31,12 +48,14 @@
         <!-- The code level of every module; JDK 9 and later compile it with release, see the profile java9-modules -->
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <maven-failsafe-plugin.version>3.6.1</maven-failsafe-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
         <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
+        <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
         <junit.version>5.14.4</junit.version>
         <executable.jar.descriptor>${project.basedir}/src/assembly/executable-jar.xml</executable.jar.descriptor>
     </properties>
@@ -77,6 +96,17 @@
         </resources>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <!-- SonarCloud analysis in the GitHub Actions workflow -->
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar-maven-plugin.version}</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -255,6 +285,33 @@
     </build>
 
     <profiles>
+        <!--
+            Coverage of the tests, for the analysis of the workflow. It is a profile so that an ordinary build stays as it
+            is. Each module records its tests, and the unwrapper, which depends on all the others, makes one report: the
+            classes of a module are also tested from the modules that use it.
+        -->
+        <profile>
+            <id>coverage</id>
+            <properties>
+                <sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/oracle-plsql-unwrapper/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>prepare-agent</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!--
             JDK 9 and later add the JPMS descriptor from src/main/java9 to the jar, as META-INF/versions/9, so that the
             classes stay at the level of Java 8 and JDK 8 does not see the descriptor. It is compiled after the tests

@@ -1,6 +1,15 @@
 # Oracle PL/SQL Unwrapper
 
+[![Java 8+](https://img.shields.io/badge/Java-8%2B-blue)](#modules-osgi-and-services)
+[![JPMS](https://img.shields.io/badge/JPMS-named%20modules-blue)](#modules-osgi-and-services)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sftwnd_oracle_plsql_unwrapper&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sftwnd_oracle_plsql_unwrapper)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sftwnd_oracle_plsql_unwrapper&metric=coverage)](https://sonarcloud.io/summary/new_code?id=sftwnd_oracle_plsql_unwrapper)
+[![Build](https://github.com/sftwnd/oracle-plsql-unwrapper/actions/workflows/build.yml/badge.svg)](https://github.com/sftwnd/oracle-plsql-unwrapper/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/sftwnd/oracle-plsql-unwrapper)](https://github.com/sftwnd/oracle-plsql-unwrapper/blob/master/LICENSE)
+
 [Русская версия](README_ru.md)
+
+**Restores PL/SQL source code from Oracle wrapped scripts of Oracle 10g and later: a library and a command line for Java 8+.**
 
 A library for restoring PL/SQL source code from the Oracle wrapped format V2 (Oracle 10g and later). The public API is in the `com.github.sftwnd.oracle.unwrap` package, and the options and the exception that the formats share are in `com.github.sftwnd.oracle.unwrap.spi`.
 
@@ -28,6 +37,8 @@ mvnw.cmd clean package
 ```
 
 The build runs the tests: they compare the output byte by byte with the reference files in `oracle-plsql-unwrap-v2/src/test/resources/samples`.
+
+The profile `coverage` adds JaCoCo, with the report of all the modules in `oracle-plsql-unwrapper/target/site/jacoco-aggregate`. GitHub Actions build the project on JDK 8, 11, 17, 21 and 25 and analyze it in SonarCloud, see [ADR 0014](docs/adr/0014-continuous-integration.md).
 
 The project has three modules, and each builds a JAR in its `target` directory:
 
