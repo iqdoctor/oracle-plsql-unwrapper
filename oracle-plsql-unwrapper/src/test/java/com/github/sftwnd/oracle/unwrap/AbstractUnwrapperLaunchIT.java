@@ -148,8 +148,7 @@ public abstract class AbstractUnwrapperLaunchIT {
 
     @Test
     void launcherStartsTheUnwrapper(@TempDir Path directory) throws Exception {
-        assumeFalse(WINDOWS, "The launcher of Windows is a command file");
-        String launcher = DISTRIBUTION.resolve("bin").resolve("unwrapper").toString();
+        String launcher = DISTRIBUTION.resolve("bin").resolve(WINDOWS ? "unwrapper.cmd" : "unwrapper").toString();
 
         assertHelp(run(launcher, "--help"));
         assertRestores(directory, launcher);

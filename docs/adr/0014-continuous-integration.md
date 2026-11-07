@@ -13,6 +13,10 @@ machine does not check that promise, and the state of the project should be visi
   - the job `build` runs `verify` on JDK 8, 11, 17, 21 and 25;
   - the job `sonar` builds on JDK 21 and analyzes the project in SonarCloud: organization `sftwnd-github`, project
     `sftwnd_oracle_plsql_unwrapper`. Without the secret `SONAR_TOKEN` it skips the analysis and passes.
+- `.github/workflows/native.yml` runs `verify` with the profile `native` on Windows, Linux and macOS and keeps each native
+  executable as an artifact, with `LICENSE`. It runs on pushes to `master`, on pull requests that change the code or the
+  build, and by hand. The Linux artifact comes from the profile `native-linux`: an executable built on the runner would need
+  the newer glibc of the runner.
 - The Maven profile `coverage` turns on JaCoCo. Each module records its tests, and the module `oracle-plsql-unwrapper`
   builds one report of all the modules in `target/site/jacoco-aggregate`, which the analysis takes.
 - The README starts with the badges of Java 8, JPMS, OSGi, the quality gate, the coverage, the build and the license.
@@ -26,6 +30,9 @@ machine does not check that promise, and the state of the project should be visi
 - JaCoCo in a profile leaves an ordinary build as it is, on every JDK, and the project `oracle-plsql-unwrapper-pro`, which
   inherits the parent, does not get it.
 - A job that passes without the token keeps the build badge honest until SonarCloud is set up.
+- `native-image` builds only for the system it runs on, so the executables of other systems need runners of those systems.
+  On Windows the same run checks `native-image.cmd` and the launcher `bin\unwrapper.cmd`, which no other build starts.
+- A native build takes minutes on each system, so it does not run on every push.
 
 ## Alternatives
 
