@@ -100,6 +100,17 @@ public abstract class AbstractUnwrapperLaunchIT {
         assertRestores(directory, JAVA, "-jar", jar);
     }
 
+    /** The executable of the profile native, if it is built: the same as the executable jar, without a JVM. */
+    @Test
+    void nativeExecutableHoldsEverything(@TempDir Path directory) throws Exception {
+        String executable = System.getProperty("native.executable", "");
+        assumeFalse(executable.isEmpty(), "No native executable: the profile native is off");
+        String command = WINDOWS ? executable + ".exe" : executable;
+
+        assertHelp(run(command, "--help"));
+        assertRestores(directory, command);
+    }
+
     /** The manifest of a part would make the jar look like that part: a bundle, a module, a jar with neighbours. */
     @Test
     void executableJarIsNoBundleAndNoModule() throws Exception {
@@ -137,8 +148,7 @@ public abstract class AbstractUnwrapperLaunchIT {
 
     @Test
     void launcherStartsTheUnwrapper(@TempDir Path directory) throws Exception {
-        assumeFalse(WINDOWS, "The launcher of Windows is a command file");
-        String launcher = DISTRIBUTION.resolve("bin").resolve("unwrapper").toString();
+        String launcher = DISTRIBUTION.resolve("bin").resolve(WINDOWS ? "unwrapper.cmd" : "unwrapper").toString();
 
         assertHelp(run(launcher, "--help"));
         assertRestores(directory, launcher);

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.github.sftwnd</groupId>
         <artifactId>oracle-plsql-unwrapper-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>oracle-plsql-unwrapper</artifactId>
@@ -16,6 +16,7 @@
     <description>Unwrapper API and command line; it finds the formats through the SPI and comes with the format V2 only</description>
 
     <properties>
+        <native.skip>false</native.skip>
         <module.name>com.github.sftwnd.oracle.unwrap</module.name>
     </properties>
 
@@ -92,4 +93,33 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>report-aggregate</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                                <configuration>
+                                    <includeCurrentProject>true</includeCurrentProject>
+                                    <excludes>
+                                        <exclude>META-INF/versions/**</exclude>
+                                    </excludes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

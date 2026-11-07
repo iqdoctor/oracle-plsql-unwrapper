@@ -71,9 +71,12 @@ services (ADR 0011), so each of the three ways to run has to find them.
 - The executable jar runs on the class path only: it has no descriptor and no OSGi headers.
 - `jlink` builds a runtime image of the unwrapper from `target/<artifact>-<version>-modules`. It has to add `jdk.charsets`,
   which the character sets of V2 need. The build does not do it: an image is made for one platform.
-- `native-image` builds an executable of the unwrapper from the executable jar. It needs `-H:+AddAllCharsets` for the
-  character sets of V2, and the resources of a format, such as `diana-layouts.tsv` of V1, by `-H:IncludeResources`.
-  The providers it finds in `META-INF/services` itself. It builds for the system it runs on, and an executable made for
-  Linux in a container of Oracle Linux 10 needs glibc 2.34. The build does not do it either.
+- The profiles `native` and `native-linux` of the parent build an executable of an unwrapper from its executable jar with
+  `native-image`, in each module with `native.skip=false`: `oracle-plsql-unwrapper` here and `oracle-plsql-unwrapper-pro` in
+  the project of the same name. They build for the system of the build, and for Linux x86_64 in a container of GraalVM on
+  Oracle Linux 10, whose executable needs glibc 2.34. `native-image` builds only for the system it runs on.
+- A format brings the options of the image in `META-INF/native-image` of its jar: V2 asks for `-H:+AddAllCharsets`, the
+  character sets of its texts. `native-image` reads them from every jar, so any build of an image gets them, and it finds
+  the providers in `META-INF/services` itself.
 - In OSGi an application needs a mediator in the container, or the bundle of the unwrapper does not resolve.
 - JDK 25 still compiles `release 8`, with a warning; a later JDK that drops it will need a toolchain.

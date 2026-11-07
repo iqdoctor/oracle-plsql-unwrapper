@@ -1,6 +1,18 @@
 # Oracle PL/SQL Unwrapper
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.sftwnd/oracle-plsql-unwrapper)](https://central.sonatype.com/artifact/com.github.sftwnd/oracle-plsql-unwrapper)
+[![javadoc](https://javadoc.io/badge2/com.github.sftwnd/oracle-plsql-unwrapper/javadoc.svg)](https://javadoc.io/doc/com.github.sftwnd/oracle-plsql-unwrapper)
+[![Java 8+](https://img.shields.io/badge/Java-8%2B-blue)](#модули-osgi-и-сервисы)
+[![JPMS](https://img.shields.io/badge/JPMS-named%20modules-blue)](#модули-osgi-и-сервисы)
+[![OSGi](https://img.shields.io/badge/OSGi-bundles-blue)](#модули-osgi-и-сервисы)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sftwnd_oracle_plsql_unwrapper&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sftwnd_oracle_plsql_unwrapper)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=sftwnd_oracle_plsql_unwrapper&metric=coverage)](https://sonarcloud.io/summary/new_code?id=sftwnd_oracle_plsql_unwrapper)
+[![Build](https://github.com/sftwnd/oracle-plsql-unwrapper/actions/workflows/build.yml/badge.svg)](https://github.com/sftwnd/oracle-plsql-unwrapper/actions/workflows/build.yml)
+[![License](https://img.shields.io/github/license/sftwnd/oracle-plsql-unwrapper)](https://github.com/sftwnd/oracle-plsql-unwrapper/blob/master/LICENSE)
+
 [English version](README.md)
+
+**Восстанавливает исходный PL/SQL-код из wrapped-скриптов Oracle 10g и новее: библиотека и командная строка для Java 8+.**
 
 Библиотека для восстановления исходного PL/SQL-кода из Oracle wrapped-формата V2 (Oracle 10g и новее). Публичный API находится в пакете `com.github.sftwnd.oracle.unwrap`, а общие с форматами параметры и исключение — в `com.github.sftwnd.oracle.unwrap.spi`.
 
@@ -29,6 +41,14 @@ mvnw.cmd clean package
 
 Сборка запускает тесты: они побайтово сравнивают результат с эталонными файлами из `oracle-plsql-unwrap-v2/src/test/resources/samples`.
 
+Профиль `coverage` добавляет JaCoCo, отчёт по всем модулям — в `oracle-plsql-unwrapper/target/site/jacoco-aggregate`. GitHub Actions собирают проект на JDK 8, 11, 17, 21 и 25 и анализируют его в SonarCloud, см. [ADR 0014](docs/adr/0014-continuous-integration_ru.md). Выпуск загружается в Maven Central профилем `release`, см. [ADR 0015](docs/adr/0015-release_ru.md).
+
+Профили `native` и `native-linux` собирают unwrapper ещё и нативным исполняемым файлом: `native` — для системы сборки, той GraalVM, на которой работает Maven, в `oracle-plsql-unwrapper/target/native`, а `native-linux` — для Linux x86_64, в контейнере GraalVM, в `oracle-plsql-unwrapper/target/native-linux-x64`. Второму нужен Docker, а его исполняемому файлу — glibc 2.34 или новее:
+
+```bash
+JAVA_HOME=/path/to/graalvm ./mvnw -Pnative,native-linux clean verify
+```
+
 В проекте три модуля, и каждый собирает JAR в своём каталоге `target`:
 
 - `oracle-plsql-unwrap-spi` — контракт wrapped-формата;
@@ -38,12 +58,24 @@ mvnw.cmd clean package
 Исполняемый JAR со всеми классами и дистрибутив, который содержит его вместе со скриптами запуска, находятся здесь:
 
 ```text
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist.zip
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist/unwrapper
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist.zip
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist/unwrapper
 ```
 
 ## Использование
+
+Библиотека есть в Maven Central:
+
+```xml
+<dependency>
+    <groupId>com.github.sftwnd</groupId>
+    <artifactId>oracle-plsql-unwrapper</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+Она подтягивает SPI и формат V2. В каждом [выпуске на GitHub](https://github.com/sftwnd/oracle-plsql-unwrapper/releases) есть ещё jar, дистрибутив и нативные исполняемые файлы для Linux x86_64, Windows x86_64 и macOS (arm64 и x86_64).
 
 Точка входа — `com.github.sftwnd.oracle.unwrap.Unwrapper`. Формат каждой wrapped-единицы определяется по её заголовку. Форматы — это сервисы, которые находятся на classpath или module path, см. [Модули, OSGi и сервисы](#модули-osgi-и-сервисы); в этом проекте есть `V2`.
 
@@ -122,13 +154,13 @@ unwrapper/bin/unwrapper S.SQL S.SQ
 Сборка оставляет JAR модулей ещё и в каталоге `target`. На JDK 9 и новее unwrapper запускается из них на module path, где форматы находятся через `provides`:
 
 ```bash
-java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-modules --module com.github.sftwnd.oracle.unwrap/com.github.sftwnd.oracle.unwrap.cli.UnwrapperCli --help
+java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-modules --module com.github.sftwnd.oracle.unwrap/com.github.sftwnd.oracle.unwrap.cli.UnwrapperCli --help
 ```
 
 Исполняемому JAR ничего рядом не нужно, он работает на classpath любого JDK; он есть и в корне дистрибутива:
 
 ```bash
-java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar S.SQL S.SQ
+java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar S.SQL S.SQ
 ```
 
 ## Модули, OSGi и сервисы
