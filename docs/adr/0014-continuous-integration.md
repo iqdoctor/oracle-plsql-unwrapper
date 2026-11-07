@@ -15,7 +15,7 @@ machine does not check that promise, and the state of the project should be visi
     `sftwnd_oracle_plsql_unwrapper`. Without the secret `SONAR_TOKEN` it skips the analysis and passes.
 - The Maven profile `coverage` turns on JaCoCo. Each module records its tests, and the module `oracle-plsql-unwrapper`
   builds one report of all the modules in `target/site/jacoco-aggregate`, which the analysis takes.
-- The README starts with the badges of Java 8, JPMS, the quality gate, the coverage, the build and the license.
+- The README starts with the badges of Java 8, JPMS, OSGi, the quality gate, the coverage, the build and the license.
 
 ## Rationale
 
@@ -39,4 +39,5 @@ machine does not check that promise, and the state of the project should be visi
 - The analysis starts once the project exists in SonarCloud and the repository has the secret `SONAR_TOKEN`; until then the
   badges of the quality gate and the coverage show nothing.
 - The launch tests run in JVMs of their own, so the coverage does not count them.
-- The project `oracle-plsql-unwrapper-pro` is private and has no such workflow or badges.
+- The project `oracle-plsql-unwrapper-pro` is private: it has no such workflow, and its badges are static ones of Java 8,
+  JPMS, OSGi and the license.
