@@ -1,4 +1,0 @@
-PROCEDURE sample_procedure IS
-BEGIN
-   SYS.DBMS_OUTPUT.PUT_LINE('sample_procedure executed.');
-END SAMPLE_PROCEDURE;

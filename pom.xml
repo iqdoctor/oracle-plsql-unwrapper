@@ -1,154 +1,302 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sftwnd.xvlr</groupId>
-    <artifactId>xvlr-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>Oracle :: PL/SQL :: Unwrapper</name>
+    <groupId>com.github.sftwnd</groupId>
+    <artifactId>oracle-plsql-unwrapper-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Oracle PL/SQL Unwrapper</name>
+    <description>Libraries for restoring Oracle wrapped PL/SQL source code: the format SPI, the format V2 and the unwrapper</description>
+
+    <licenses>
+        <license>
+            <name>BSD-3-Clause</name>
+            <url>https://opensource.org/license/bsd-3-clause</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>oracle-plsql-unwrap-spi</module>
+        <module>oracle-plsql-unwrap-v2</module>
+        <module>oracle-plsql-unwrapper</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven-compiler-plugin.version>3.9.0</maven-compiler-plugin.version>
-        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
-        <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
-        <junit.version>5.8.2</junit.version>
-        <oracle.jdbc.version>21.7.0.0</oracle.jdbc.version>
-        <commons-cli.version>1.5.0</commons-cli.version>
+        <!-- The code level of every module; JDK 9 and later compile it with release, see the profile java9-modules -->
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
+        <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-failsafe-plugin.version>3.6.1</maven-failsafe-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
+        <junit.version>5.14.4</junit.version>
+        <executable.jar.descriptor>${project.basedir}/src/assembly/executable-jar.xml</executable.jar.descriptor>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ucp11</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.oracle.database.nls</groupId>
-            <artifactId>orai18n</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
-        <testSourceDirectory>src/test/java</testSourceDirectory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <compilerArgs>
-                        <arg>-Xlint:all</arg>
-                        <arg>-Xlint:-processing</arg>
-                    </compilerArgs>
-                    <showWarnings>true</showWarnings>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>${maven-source-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                <configuration>
-                    <source>11</source>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-api</artifactId>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.junit.jupiter</groupId>
-                <artifactId>junit-jupiter-engine</artifactId>
-                <scope>test</scope>
-                <version>${junit.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-cli</groupId>
-                <artifactId>commons-cli</artifactId>
-                <version>${commons-cli.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.oracle.database.jdbc</groupId>
-                <artifactId>ojdbc-bom</artifactId>
-                <version>${oracle.jdbc.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- The parent directory of a module is the root of its project, so a jar holds the license of its project -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/..</directory>
+                <targetPath>META-INF</targetPath>
+                <includes>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <!-- A test starts the unwrapper in its own JVM, the test itself stays on the class path -->
+                        <useModulePath>false</useModulePath>
+                        <systemPropertyVariables>
+                            <distribution.directory>${project.build.directory}/${project.build.finalName}-dist/unwrapper</distribution.directory>
+                            <modules.directory>${project.build.directory}/${project.build.finalName}-modules</modules.directory>
+                            <unwrapper.jar>${project.build.finalName}.jar</unwrapper.jar>
+                            <executable.jar>${project.build.directory}/${project.build.finalName}-all.jar</executable.jar>
+                        </systemPropertyVariables>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <!--
+                    An unwrapper gets an executable jar next to its ordinary jar, which runs on the class path of any
+                    JDK, and a distribution of that jar with bin/ from the jar of the unwrapper. The ordinary jars of its
+                    modules stay in a directory of target, for the module path of the launch tests and for jlink.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>executable-jar</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <archive>
+                                    <manifest>
+                                        <mainClass>com.github.sftwnd.oracle.unwrap.cli.UnwrapperCli</mainClass>
+                                    </manifest>
+                                </archive>
+                                <descriptors>
+                                    <descriptor>${executable.jar.descriptor}</descriptor>
+                                </descriptors>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>modules</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <attach>false</attach>
+                                <inlineDescriptors>
+                                    <inlineDescriptor>
+                                        <id>modules</id>
+                                        <formats>
+                                            <format>dir</format>
+                                        </formats>
+                                        <includeBaseDirectory>false</includeBaseDirectory>
+                                        <dependencySets>
+                                            <dependencySet>
+                                                <outputDirectory>.</outputDirectory>
+                                                <useProjectArtifact>true</useProjectArtifact>
+                                                <scope>runtime</scope>
+                                            </dependencySet>
+                                        </dependencySets>
+                                    </inlineDescriptor>
+                                </inlineDescriptors>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>distribution</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <!-- It goes out as a file: a directory cannot be an artifact, and the jars already are -->
+                                <attach>false</attach>
+                                <inlineDescriptors>
+                                    <inlineDescriptor>
+                                        <id>dist</id>
+                                        <formats>
+                                            <format>dir</format>
+                                            <format>zip</format>
+                                        </formats>
+                                        <baseDirectory>unwrapper</baseDirectory>
+                                        <files>
+                                            <file>
+                                                <source>${project.basedir}/../LICENSE</source>
+                                            </file>
+                                            <file>
+                                                <source>${project.build.directory}/${project.build.finalName}-all.jar</source>
+                                                <destName>${project.build.finalName}.jar</destName>
+                                            </file>
+                                        </files>
+                                        <dependencySets>
+                                            <dependencySet>
+                                                <outputDirectory>.</outputDirectory>
+                                                <useProjectArtifact>true</useProjectArtifact>
+                                                <includes>
+                                                    <include>com.github.sftwnd:oracle-plsql-unwrapper</include>
+                                                </includes>
+                                                <unpack>true</unpack>
+                                                <unpackOptions>
+                                                    <includes>
+                                                        <include>bin/**</include>
+                                                    </includes>
+                                                </unpackOptions>
+                                                <fileMode>0755</fileMode>
+                                                <scope>runtime</scope>
+                                            </dependencySet>
+                                        </dependencySets>
+                                    </inlineDescriptor>
+                                </inlineDescriptors>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <!--
+                OSGi headers; module.name is the name of the bundle and of the JPMS module. Each module adds its
+                packages and capabilities to the instructions. The manifest is built before module-info.class appears:
+                bnd takes the required execution environment from the class versions, and that stays Java 8.
+            -->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>${maven-bundle-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${module.name}</Bundle-SymbolicName>
+                        <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
+                        <Multi-Release>true</Multi-Release>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!--
+            JDK 9 and later add the JPMS descriptor from src/main/java9 to the jar, as META-INF/versions/9, so that the
+            classes stay at the level of Java 8 and JDK 8 does not see the descriptor. It is compiled after the tests
+            and after the classes of the module, when the jars of the modules it requires exist: the descriptor of a
+            multi-release jar is not found in target/classes.
+        -->
+        <profile>
+            <id>java9-modules</id>
+            <activation>
+                <jdk>[9,)</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.release>8</maven.compiler.release>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>compile-module-info</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                                <configuration>
+                                    <release>9</release>
+                                    <multiReleaseOutput>true</multiReleaseOutput>
+                                    <compilerArgs>
+                                        <arg>--patch-module</arg>
+                                        <arg>${module.name}=${project.build.outputDirectory}</arg>
+                                    </compilerArgs>
+                                    <compileSourceRoots>
+                                        <compileSourceRoot>${project.basedir}/src/main/java9</compileSourceRoot>
+                                    </compileSourceRoots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
