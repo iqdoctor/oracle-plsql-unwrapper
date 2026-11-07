@@ -41,6 +41,12 @@ The build runs the tests: they compare the output byte by byte with the referenc
 
 The profile `coverage` adds JaCoCo, with the report of all the modules in `oracle-plsql-unwrapper/target/site/jacoco-aggregate`. GitHub Actions build the project on JDK 8, 11, 17, 21 and 25 and analyze it in SonarCloud, see [ADR 0014](docs/adr/0014-continuous-integration.md).
 
+The profiles `native` and `native-linux` also build the unwrapper as a native executable: `native` for the system of the build, with the GraalVM that runs Maven, in `oracle-plsql-unwrapper/target/native`, and `native-linux` for Linux x86_64, in a container of GraalVM, in `oracle-plsql-unwrapper/target/native-linux-x64`. The second one needs Docker, and its executable needs glibc 2.34 or later:
+
+```bash
+JAVA_HOME=/path/to/graalvm ./mvnw -Pnative,native-linux clean verify
+```
+
 The project has three modules, and each builds a JAR in its `target` directory:
 
 - `oracle-plsql-unwrap-spi` — the contract of a wrapped format;

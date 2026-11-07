@@ -16,6 +16,11 @@
     <description>Unwrapper API and command line; it finds the formats through the SPI and comes with the format V2 only</description>
 
     <properties>
+        <!-- The native executable that the launch tests start: set by the profile native -->
+        <native.executable/>
+        <!-- native-image of the JDK that runs Maven; another one with -Dnative.image.command=... -->
+        <native.image.command>${java.home}/bin/native-image</native.image.command>
+        <native.linux.image>ghcr.io/graalvm/native-image-community:25</native.linux.image>
         <module.name>com.github.sftwnd.oracle.unwrap</module.name>
     </properties>
 
@@ -94,6 +99,101 @@
     </build>
 
     <profiles>
+        <!--
+            Native executable for the system of the build, from the executable jar: target/native/unwrapper. It needs a
+            GraalVM with native-image; the options of the image come from META-INF/native-image of the jars.
+        -->
+        <profile>
+            <id>native</id>
+            <properties>
+                <native.executable>${project.build.directory}/native/unwrapper</native.executable>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>native-image</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>${native.image.command}</executable>
+                                    <!-- native-image does not create the directory of the image, exec does -->
+                                    <workingDirectory>${project.build.directory}/native</workingDirectory>
+                                    <arguments>
+                                        <argument>--no-fallback</argument>
+                                        <argument>-jar</argument>
+                                        <argument>${project.build.directory}/${project.build.finalName}-all.jar</argument>
+                                        <argument>-o</argument>
+                                        <argument>unwrapper</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
+            Native executable for Linux x86_64, built in a container of GraalVM: target/native-linux-x64/unwrapper. It
+            needs Docker; the executable needs glibc 2.34 or later.
+        -->
+        <profile>
+            <id>native-linux</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>native-image-linux</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>docker</executable>
+                                    <workingDirectory>${project.build.directory}/native-linux-x64</workingDirectory>
+                                    <arguments>
+                                        <argument>run</argument>
+                                        <argument>--rm</argument>
+                                        <argument>--platform</argument>
+                                        <argument>linux/amd64</argument>
+                                        <argument>-v</argument>
+                                        <argument>${project.build.directory}:/work</argument>
+                                        <argument>-w</argument>
+                                        <argument>/work/native-linux-x64</argument>
+                                        <argument>${native.linux.image}</argument>
+                                        <argument>--no-fallback</argument>
+                                        <argument>-jar</argument>
+                                        <argument>../${project.build.finalName}-all.jar</argument>
+                                        <argument>-o</argument>
+                                        <argument>unwrapper</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- native-image of GraalVM for Windows is a command file -->
+        <profile>
+            <id>native-image-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <native.image.command>${java.home}/bin/native-image.cmd</native.image.command>
+            </properties>
+        </profile>
         <profile>
             <id>coverage</id>
             <build>
