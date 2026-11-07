@@ -41,6 +41,12 @@ mvnw.cmd clean package
 
 Профиль `coverage` добавляет JaCoCo, отчёт по всем модулям — в `oracle-plsql-unwrapper/target/site/jacoco-aggregate`. GitHub Actions собирают проект на JDK 8, 11, 17, 21 и 25 и анализируют его в SonarCloud, см. [ADR 0014](docs/adr/0014-continuous-integration_ru.md).
 
+Профили `native` и `native-linux` собирают unwrapper ещё и нативным исполняемым файлом: `native` — для системы сборки, той GraalVM, на которой работает Maven, в `oracle-plsql-unwrapper/target/native`, а `native-linux` — для Linux x86_64, в контейнере GraalVM, в `oracle-plsql-unwrapper/target/native-linux-x64`. Второму нужен Docker, а его исполняемому файлу — glibc 2.34 или новее:
+
+```bash
+JAVA_HOME=/path/to/graalvm ./mvnw -Pnative,native-linux clean verify
+```
+
 В проекте три модуля, и каждый собирает JAR в своём каталоге `target`:
 
 - `oracle-plsql-unwrap-spi` — контракт wrapped-формата;

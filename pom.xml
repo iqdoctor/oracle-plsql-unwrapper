@@ -49,6 +49,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
@@ -102,6 +103,11 @@
                     <version>${jacoco-maven-plugin.version}</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>${exec-maven-plugin.version}</version>
+                </plugin>
+                <plugin>
                     <!-- SonarCloud analysis in the GitHub Actions workflow -->
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
@@ -137,6 +143,7 @@
                             <modules.directory>${project.build.directory}/${project.build.finalName}-modules</modules.directory>
                             <unwrapper.jar>${project.build.finalName}.jar</unwrapper.jar>
                             <executable.jar>${project.build.directory}/${project.build.finalName}-all.jar</executable.jar>
+                            <native.executable>${native.executable}</native.executable>
                         </systemPropertyVariables>
                     </configuration>
                 </plugin>
