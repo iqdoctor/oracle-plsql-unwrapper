@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- The modules share the address of the project: Maven would append the name of a module to it -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+         child.project.url.inherit.append.path="false">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.sftwnd</groupId>
     <artifactId>oracle-plsql-unwrapper-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>Oracle PL/SQL Unwrapper</name>
@@ -30,7 +32,9 @@
         </developer>
     </developers>
 
-    <scm>
+    <scm child.scm.connection.inherit.append.path="false"
+         child.scm.developerConnection.inherit.append.path="false"
+         child.scm.url.inherit.append.path="false">
         <url>https://github.com/sftwnd/oracle-plsql-unwrapper</url>
         <connection>scm:git:https://github.com/sftwnd/oracle-plsql-unwrapper.git</connection>
         <developerConnection>scm:git:git@github.com:sftwnd/oracle-plsql-unwrapper.git</developerConnection>
@@ -49,15 +53,31 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <jacoco-maven-plugin.version>0.8.15</jacoco-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.12.0</central-publishing-maven-plugin.version>
         <exec-maven-plugin.version>3.6.4</exec-maven-plugin.version>
         <maven-assembly-plugin.version>3.7.1</maven-assembly-plugin.version>
         <maven-bundle-plugin.version>5.1.9</maven-bundle-plugin.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
         <maven-failsafe-plugin.version>3.6.1</maven-failsafe-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven-source-plugin.version>3.4.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>3.6.1</maven-surefire-plugin.version>
         <sonar-maven-plugin.version>5.8.0.7211</sonar-maven-plugin.version>
         <junit.version>5.14.4</junit.version>
+        <!-- the passphrase of the signing key comes from gpg-agent, not from a server of the settings -->
+        <gpg.bestPractices>true</gpg.bestPractices>
+        <!-- set to true by a project that must never be published: the profile release then uploads nothing -->
+        <central.skip>false</central.skip>
+        <!-- set to false by a module that builds an unwrapper: the profiles native and native-linux build only there -->
+        <native.skip>true</native.skip>
+        <!-- native-image of the JDK that runs Maven; another one with -Dnative.image.command=... -->
+        <native.image.command>${java.home}/bin/native-image</native.image.command>
+        <native.linux.image>ghcr.io/graalvm/native-image-community:25</native.linux.image>
+        <!-- the native executable that the launch tests start: set by the profile native -->
+        <native.executable/>
         <executable.jar.descriptor>${project.basedir}/src/assembly/executable-jar.xml</executable.jar.descriptor>
     </properties>
 
@@ -262,6 +282,43 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <source>8</source>
+                    <!--
+                        A broken reference, bad markup or a member without a comment fails the build. The comments are
+                        sentences, without a tag for each parameter and result: doclint does not ask for the tags.
+                    -->
+                    <doclint>all,-missing</doclint>
+                    <failOnWarnings>true</failOnWarnings>
+                    <!-- the command line is no API -->
+                    <excludePackageNames>com.github.sftwnd.oracle.unwrap.cli</excludePackageNames>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!--
                 OSGi headers; module.name is the name of the bundle and of the JPMS module. Each module adds its
                 packages and capabilities to the instructions. The manifest is built before module-info.class appears:
@@ -292,6 +349,177 @@
     </build>
 
     <profiles>
+        <!--
+            Native executable of an unwrapper for the system of the build, from its executable jar: target/native/unwrapper.
+            It needs a GraalVM with native-image; the options of the image come from META-INF/native-image of the jars.
+            Only a module with native.skip=false builds it.
+        -->
+        <profile>
+            <id>native</id>
+            <properties>
+                <native.executable>${project.build.directory}/native/unwrapper</native.executable>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>native-image</id>
+                                <!-- after the executable jar of the module, before the launch tests that start the image -->
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${native.skip}</skip>
+                                    <executable>${native.image.command}</executable>
+                                    <!-- native-image does not create the directory of the image, exec does -->
+                                    <workingDirectory>${project.build.directory}/native</workingDirectory>
+                                    <arguments>
+                                        <argument>--no-fallback</argument>
+                                        <argument>-jar</argument>
+                                        <argument>${project.build.directory}/${project.build.finalName}-all.jar</argument>
+                                        <argument>-o</argument>
+                                        <argument>unwrapper</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
+            Native executable of an unwrapper for Linux x86_64, built in a container of GraalVM:
+            target/native-linux-x64/unwrapper. It needs Docker; the executable needs glibc 2.34 or later.
+        -->
+        <profile>
+            <id>native-linux</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>native-image-linux</id>
+                                <!-- after the executable jar of the module, before the launch tests that start the image -->
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>${native.skip}</skip>
+                                    <executable>docker</executable>
+                                    <workingDirectory>${project.build.directory}/native-linux-x64</workingDirectory>
+                                    <arguments>
+                                        <argument>run</argument>
+                                        <argument>--rm</argument>
+                                        <argument>--platform</argument>
+                                        <argument>linux/amd64</argument>
+                                        <argument>-v</argument>
+                                        <argument>${project.build.directory}:/work</argument>
+                                        <argument>-w</argument>
+                                        <argument>/work/native-linux-x64</argument>
+                                        <argument>${native.linux.image}</argument>
+                                        <argument>--no-fallback</argument>
+                                        <argument>-jar</argument>
+                                        <argument>../${project.build.finalName}-all.jar</argument>
+                                        <argument>-o</argument>
+                                        <argument>unwrapper</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- native-image of GraalVM for Windows is a command file -->
+        <profile>
+            <id>native-image-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <native.image.command>${java.home}/bin/native-image.cmd</native.image.command>
+            </properties>
+        </profile>
+        <!--
+            Release to Maven Central: ./mvnw -Prelease clean deploy on JDK 9 or later, with the signing key unlocked in
+            gpg-agent. The deployment waits in the Central Publisher Portal as validated until it is published there by
+            hand. A project with central.skip=true uploads nothing.
+        -->
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!--
+                            Only a release version of a published project, built on JDK 9 or later: a jar of JDK 8 has
+                            no module descriptor, and central-publishing uploads a SNAPSHOT even with skipPublishing
+                        -->
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>${maven-enforcer-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>release-on-jdk9+</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireReleaseVersion>
+                                            <message>Only a release version is uploaded to Maven Central</message>
+                                        </requireReleaseVersion>
+                                        <requireProperty>
+                                            <property>central.skip</property>
+                                            <regex>false</regex>
+                                            <regexMessage>This project is not published to Maven Central</regexMessage>
+                                        </requireProperty>
+                                        <requireJavaVersion>
+                                            <version>[9,)</version>
+                                            <message>A release has to be built on JDK 9 or later, so that the jars contain the module descriptors</message>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>${maven-gpg-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!-- deploy uploads to the Central Publisher Portal: server central of .mvn/settings.xml -->
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central-publishing-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <deploymentName>oracle-plsql-unwrapper-${project.version}</deploymentName>
+                            <skipPublishing>${central.skip}</skipPublishing>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <!--
             Coverage of the tests, for the analysis of the workflow. It is a profile so that an ordinary build stays as it
             is. Each module records its tests, and the unwrapper, which depends on all the others, makes one report: the

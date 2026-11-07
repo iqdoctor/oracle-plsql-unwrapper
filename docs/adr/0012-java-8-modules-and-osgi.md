@@ -71,8 +71,9 @@ services (ADR 0011), so each of the three ways to run has to find them.
 - The executable jar runs on the class path only: it has no descriptor and no OSGi headers.
 - `jlink` builds a runtime image of the unwrapper from `target/<artifact>-<version>-modules`. It has to add `jdk.charsets`,
   which the character sets of V2 need. The build does not do it: an image is made for one platform.
-- The profiles `native` and `native-linux` of the module `oracle-plsql-unwrapper` build an executable of the unwrapper from
-  the executable jar with `native-image`: for the system of the build, and for Linux x86_64 in a container of GraalVM on
+- The profiles `native` and `native-linux` of the parent build an executable of an unwrapper from its executable jar with
+  `native-image`, in each module with `native.skip=false`: `oracle-plsql-unwrapper` here and `oracle-plsql-unwrapper-pro` in
+  the project of the same name. They build for the system of the build, and for Linux x86_64 in a container of GraalVM on
   Oracle Linux 10, whose executable needs glibc 2.34. `native-image` builds only for the system it runs on.
 - A format brings the options of the image in `META-INF/native-image` of its jar: V2 asks for `-H:+AddAllCharsets`, the
   character sets of its texts. `native-image` reads them from every jar, so any build of an image gets them, and it finds
