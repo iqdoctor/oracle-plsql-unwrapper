@@ -1,0 +1,66 @@
+name: native
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    paths:
+      - '**/pom.xml'
+      - '**/src/**'
+      - '.mvn/**'
+      - '.github/workflows/native.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  native:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # the executable of the runner needs the glibc of the runner: the artifact comes from a container of GraalVM
+          - name: Linux x86_64
+            os: ubuntu-latest
+            profiles: native,native-linux
+            artifact: unwrapper-linux-x64
+            executable: oracle-plsql-unwrapper/target/native-linux-x64/unwrapper
+          - name: Windows x86_64
+            os: windows-latest
+            profiles: native
+            artifact: unwrapper-windows-x64
+            executable: oracle-plsql-unwrapper/target/native/unwrapper.exe
+          - name: macOS arm64
+            os: macos-latest
+            profiles: native
+            artifact: unwrapper-macos-arm64
+            executable: oracle-plsql-unwrapper/target/native/unwrapper
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: graalvm-community
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: maven
+      # the launch tests start the jars, the launcher of bin/ and the native executable of the system
+      - name: Build, test and build the native executable
+        shell: bash
+        run: ./mvnw -B -ntp -P${{ matrix.profiles }} verify
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            ${{ matrix.executable }}
+            LICENSE
+          if-no-files-found: error
