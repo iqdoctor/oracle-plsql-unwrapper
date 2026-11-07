@@ -1,5 +1,7 @@
 # Oracle PL/SQL Unwrapper
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.sftwnd/oracle-plsql-unwrapper)](https://central.sonatype.com/artifact/com.github.sftwnd/oracle-plsql-unwrapper)
+[![javadoc](https://javadoc.io/badge2/com.github.sftwnd/oracle-plsql-unwrapper/javadoc.svg)](https://javadoc.io/doc/com.github.sftwnd/oracle-plsql-unwrapper)
 [![Java 8+](https://img.shields.io/badge/Java-8%2B-blue)](#modules-osgi-and-services)
 [![JPMS](https://img.shields.io/badge/JPMS-named%20modules-blue)](#modules-osgi-and-services)
 [![OSGi](https://img.shields.io/badge/OSGi-bundles-blue)](#modules-osgi-and-services)
@@ -39,7 +41,7 @@ mvnw.cmd clean package
 
 The build runs the tests: they compare the output byte by byte with the reference files in `oracle-plsql-unwrap-v2/src/test/resources/samples`.
 
-The profile `coverage` adds JaCoCo, with the report of all the modules in `oracle-plsql-unwrapper/target/site/jacoco-aggregate`. GitHub Actions build the project on JDK 8, 11, 17, 21 and 25 and analyze it in SonarCloud, see [ADR 0014](docs/adr/0014-continuous-integration.md).
+The profile `coverage` adds JaCoCo, with the report of all the modules in `oracle-plsql-unwrapper/target/site/jacoco-aggregate`. GitHub Actions build the project on JDK 8, 11, 17, 21 and 25 and analyze it in SonarCloud, see [ADR 0014](docs/adr/0014-continuous-integration.md). A release is uploaded to Maven Central with the profile `release`, see [ADR 0015](docs/adr/0015-release.md).
 
 The profiles `native` and `native-linux` also build the unwrapper as a native executable: `native` for the system of the build, with the GraalVM that runs Maven, in `oracle-plsql-unwrapper/target/native`, and `native-linux` for Linux x86_64, in a container of GraalVM, in `oracle-plsql-unwrapper/target/native-linux-x64`. The second one needs Docker, and its executable needs glibc 2.34 or later:
 
@@ -56,12 +58,24 @@ The project has three modules, and each builds a JAR in its `target` directory:
 The executable JAR with all the classes and the distribution, which holds it with the launchers, are here:
 
 ```text
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist.zip
-oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-dist/unwrapper
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist.zip
+oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-dist/unwrapper
 ```
 
 ## Usage
+
+The library is on Maven Central:
+
+```xml
+<dependency>
+    <groupId>com.github.sftwnd</groupId>
+    <artifactId>oracle-plsql-unwrapper</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+It brings the SPI and the format V2. Each [release on GitHub](https://github.com/sftwnd/oracle-plsql-unwrapper/releases) also holds the jars, the distribution and the native executables for Linux x86_64, Windows x86_64 and macOS (arm64 and x86_64).
 
 The entry point is `com.github.sftwnd.oracle.unwrap.Unwrapper`. The format of each wrapped unit is detected from its header. The formats are services found on the class path or the module path, see [Modules, OSGi and services](#modules-osgi-and-services); this project has `V2`.
 
@@ -140,13 +154,13 @@ unwrapper/bin/unwrapper S.SQL S.SQ
 The build also leaves the JARs of the modules in a directory of `target`. On JDK 9 and later the unwrapper starts from them on the module path, where the formats are found through `provides`:
 
 ```bash
-java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-modules --module com.github.sftwnd.oracle.unwrap/com.github.sftwnd.oracle.unwrap.cli.UnwrapperCli --help
+java --module-path oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-modules --module com.github.sftwnd.oracle.unwrap/com.github.sftwnd.oracle.unwrap.cli.UnwrapperCli --help
 ```
 
 The executable JAR needs nothing next to it and runs on the class path of any JDK; the distribution has it at its root too:
 
 ```bash
-java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-SNAPSHOT-all.jar S.SQL S.SQ
+java -jar oracle-plsql-unwrapper/target/oracle-plsql-unwrapper-1.0.0-all.jar S.SQL S.SQ
 ```
 
 ## Modules, OSGi and services

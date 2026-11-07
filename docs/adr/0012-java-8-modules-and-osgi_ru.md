@@ -70,8 +70,9 @@
 - Исполняемый jar работает только на classpath: у него нет дескриптора и заголовков OSGi.
 - `jlink` собирает образ unwrapper из `target/<artifact>-<version>-modules`. Ему нужно добавить `jdk.charsets`: эти
   кодировки использует V2. Сборка этого не делает: образ создаётся под одну платформу.
-- Профили `native` и `native-linux` модуля `oracle-plsql-unwrapper` собирают исполняемый файл unwrapper из исполняемого jar
-  через `native-image`: для системы сборки и для Linux x86_64 в контейнере GraalVM на Oracle Linux 10, чей файл требует
+- Профили `native` и `native-linux` родителя собирают исполняемый файл unwrapper из его исполняемого jar через
+  `native-image` в каждом модуле с `native.skip=false`: здесь в `oracle-plsql-unwrapper`, а в одноимённом проекте — в
+  `oracle-plsql-unwrapper-pro`. Они собирают для системы сборки и для Linux x86_64 в контейнере GraalVM на Oracle Linux 10, чей файл требует
   glibc 2.34. `native-image` собирает только под ту систему, где запущен.
 - Формат приносит опции образа в `META-INF/native-image` своего jar: V2 просит `-H:+AddAllCharsets`, кодировки своих
   текстов. `native-image` читает их из каждого jar, поэтому их получает любая сборка образа, а поставщиков он сам находит
