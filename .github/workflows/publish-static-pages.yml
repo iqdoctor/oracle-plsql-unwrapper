@@ -4,11 +4,9 @@ on:
   push:
     branches:
       - master
-      - codex/marketing-tool-baseline
     paths:
       - "site/**"
       - ".github/workflows/publish-static-pages.yml"
-  workflow_dispatch:
 
 permissions:
   contents: read

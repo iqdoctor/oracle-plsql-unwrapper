@@ -14,6 +14,7 @@ Open http://127.0.0.1:8091/. Stop only this temporary static-preview process aft
 
 - Public URL: https://iqdoctor.github.io/oracle-plsql-unwrapper/.
 - `.github/workflows/publish-static-pages.yml` deploys only this `site/` directory through GitHub Actions; no framework build step is required.
+- Only pushes to `master` deploy. Pull request branches are not permitted by the repository's `github-pages` environment policy; merge an approved update to publish it.
 - The repository's Pages publishing source must be set to **GitHub Actions**.
 - This is a project site on the `github.io` domain. No custom domain, Cloudflare, backend, or DNS configuration is used.
 - Do not place `tool/backend/`, secrets, submitted source, or runtime data in this directory.
