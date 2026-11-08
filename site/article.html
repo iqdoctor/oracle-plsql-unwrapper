@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="What to do when only Oracle-wrapped PL/SQL remains: V2 open-source options, V1 limits, PLS-01918 context, and rights-first recovery.">
-<meta name="theme-color" content="#10192b"><meta property="og:type" content="article"><meta property="og:title" content="When Wrapped PL/SQL Is All That Remains"><meta property="og:description" content="A practical guide to Oracle wrap formats, the free V2 project, and recovery paths for complex cases."><meta property="og:url" content="https://iqdoctor.github.io/oracle-plsql-unwrapper/article.html"><meta property="og:site_name" content="OPS Unwrapper"><meta name="twitter:card" content="summary">
-<title>When Wrapped PL/SQL Is All That Remains — OPS Unwrapper Article</title>
+<meta name="theme-color" content="#10192b"><meta property="og:type" content="article"><meta property="og:title" content="When Wrapped PL/SQL Is All That Remains"><meta property="og:description" content="A practical guide to Oracle wrap formats, the free V2 project, and recovery paths for complex cases."><meta property="og:url" content="https://iqdoctor.github.io/oracle-plsql-unwrapper/article.html"><meta property="og:site_name" content="OPS V2 Unwrapper"><meta name="twitter:card" content="summary">
+<title>When Wrapped PL/SQL Is All That Remains — OPS V2 Unwrapper Article</title>
 <link rel="canonical" href="https://iqdoctor.github.io/oracle-plsql-unwrapper/article.html"><link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header"><div class="wrap header-row">
-<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">OPS</span><span>OPS Unwrapper</span></a>
-<nav class="nav" aria-label="Main navigation"><a href="landing.html">About</a><a href="tool.html">V2 Unwrapper</a><a href="article.html" aria-current="page">Article</a><a href="presentation.html">Brief</a><a class="nav-github" href="https://github.com/sftwnd/oracle-plsql-unwrapper"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.47-.01.81.43.92.62.54.9 1.41.65 1.76.5.05-.39.21-.65.38-.8-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span>Repository</span></a></nav>
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">V2</span><span>OPS V2 Unwrapper</span></a>
+<nav class="nav" aria-label="Main navigation"><a href="tool.html">OPS V2 Unwrapper</a><a href="article.html" aria-current="page">Article</a><a href="presentation.html">Presentation</a><a href="landing.html">About</a><a class="nav-github" href="https://github.com/sftwnd/oracle-plsql-unwrapper"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.47-.01.81.43.92.62.54.9 1.41.65 1.76.5.05-.39.21-.65.38-.8-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span>Repo</span></a></nav>
 </div></header>
 <main id="main">
 <section class="hero"><article class="wrap prose">
@@ -57,7 +57,7 @@
 </article>
 </main>
 <footer class="site-footer"><div class="wrap footer-row">
-<div><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">OPS</span><span>OPS Unwrapper</span></a><p>Free V2 capability and clear routing for cases beyond it.</p></div>
-<div class="footer-links"><a href="landing.html">About</a><a href="tool.html">V2 Unwrapper</a><a href="presentation.html">Brief</a><a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Free V2 Releases</a><a href="mailto:ashindarev@gmail.com">Email Andrey</a><a href="https://www.linkedin.com/in/ashindarev/">LinkedIn</a></div>
+<div><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">V2</span><span>OPS V2 Unwrapper</span></a><p>Free V2 capability and clear routing for cases beyond it.</p></div>
+<div class="footer-links"><a href="landing.html">About</a><a href="tool.html">OPS V2 Unwrapper</a><a href="presentation.html">Presentation</a><a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Free V2 Releases</a><a href="mailto:ashindarev@gmail.com">Email Andrey</a><a href="https://www.linkedin.com/in/ashindarev/">LinkedIn</a></div>
 </div></footer>
 </body></html>

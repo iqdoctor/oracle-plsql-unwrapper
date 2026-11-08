@@ -22,7 +22,7 @@ Open http://127.0.0.1:8091/. Stop only this temporary static-preview process aft
 ## Pages
 
 - index.html — GitHub Pages root; redirects to the tool page
-- tool.html — OPS Unwrapper paste/upload and result preview; backend is not connected
+- tool.html — OPS V2 Unwrapper paste/upload and result preview; backend is not connected
 - landing.html — About page for V2 support and recovery options
 - article.html — “When Wrapped PL/SQL Is All That Remains”
 - presentation.html — “From Wrapped Code to Readable PL/SQL” brief
