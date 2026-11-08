@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A practical guide to the free Oracle PL/SQL Unwrapper V2 project, format limits, and recovery paths for complex cases.">
+<meta name="theme-color" content="#102532">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Oracle PL/SQL Unwrapper — V2 Resources and Recovery Paths">
+<meta property="og:description" content="A practical guide to the free Oracle PL/SQL Unwrapper V2 project, format limits, and recovery paths for complex cases.">
+<meta property="og:url" content="https://unwrap.iqdoctor.pro/">
+<meta property="og:site_name" content="Oracle PL/SQL Unwrapper">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Oracle PL/SQL Unwrapper — V2 Resources and Recovery Paths">
+<meta name="twitter:description" content="A practical guide to the free Oracle PL/SQL Unwrapper V2 project, format limits, and recovery paths for complex cases.">
+<title>Oracle PL/SQL Unwrapper — V2 Resources and Recovery Paths</title>
+<link rel="canonical" href="https://unwrap.iqdoctor.pro/"><link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-row">
+<a class="brand" href="index.html" aria-label="Oracle PL/SQL Unwrapper home"><span class="brand-mark" aria-hidden="true">PL</span><span>Oracle PL/SQL Unwrapper</span></a>
+<nav class="nav" aria-label="Main navigation"><a href="index.html" aria-current="page">Overview</a><a href="article.html">Article</a><a href="presentation.html">Presentation</a><a href="https://github.com/sftwnd/oracle-plsql-unwrapper">Repository</a></nav>
+</div></header>
+<main id="main">
+<section class="hero"><div class="wrap">
+<span class="eyebrow">Open-source V2 · professional recovery for complex cases</span>
+<h1>Readable PL/SQL starts with knowing the format.</h1>
+<p class="lede">Oracle PL/SQL Unwrapper is a free Java library and command-line tool for Oracle wrap format V2. It recognizes V1, but does not unwrap it. This resource hub explains the supported path and where to go when a case needs more.</p>
+<div class="actions"><a class="button" href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Explore the free V2 releases <span aria-hidden="true">↗</span></a><a class="button secondary" href="article.html">Read the practical guide</a></div>
+<div class="facts" aria-label="Project facts"><div class="fact"><strong>V2 support</strong><span>Oracle 10g through 26ai+</span></div><div class="fact"><strong>Java 8+</strong><span>Library and command-line interface</span></div><div class="fact"><strong>BSD-3-Clause</strong><span>Open-source license</span></div><div class="fact"><strong>V1 recognized</strong><span>Not unwrapped by the public project</span></div></div>
+</div></section>
+<section class="section"><div class="wrap">
+<div class="section-intro"><span class="eyebrow">Choose your route</span><h2>One project, two different paths</h2><p>Start with the format and the scope of the work. The open-source project covers V2. V1, managed bulk recovery, re-wrapping, and difficult cases are separate professional services.</p></div>
+<div class="grid">
+<article class="card"><div class="card-kicker">Free · self-service</div><h3>Oracle wrap V2</h3><p>Use the Java library or CLI for wrapped PL/SQL from Oracle 10g through 26ai+. Native releases are available for Linux x64, Windows x64, and macOS arm64/x64.</p><p><a href="https://github.com/sftwnd/oracle-plsql-unwrapper">View source</a> · <a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Get releases</a></p></article>
+<article class="card"><div class="card-kicker">Recognized · not restored</div><h3>Oracle wrap V1</h3><p>V1 covers Oracle 7.2–9.2. The public project can recognize V1 and reports that it is not supported for unwrapping. It does not attempt a V1 restore.</p><p>For an eligible case, contact Andrey after confirming rights to the code.</p></article>
+<article class="card"><div class="card-kicker">Scope-dependent</div><h3>Bulk and complex work</h3><p>For local scripts with several wrapped objects, use the CLI. Managed bulk recovery, PLS-01918 investigations, re-wrapping, and complex environments require a separate discussion.</p><p><a href="mailto:ashindarev@gmail.com">Email Andrey</a> · <a href="https://www.linkedin.com/in/ashindarev/">LinkedIn</a></p></article>
+</div></div></section>
+<section class="section"><div class="wrap split">
+<div><span class="eyebrow">Set expectations</span><h2>Readable logic, not the original file</h2><p>The V2 format does not retain the original PL/SQL version. Recovery can restore program logic and identifiers, but comments and original formatting are usually lost. The result should not be treated as a byte-for-byte reconstruction.</p><p class="muted">The Maven Central artifact is <code>com.github.sftwnd:oracle-plsql-unwrapper:1.0.0</code>.</p></div>
+<aside class="callout"><h3>About the browser tool</h3><p>The unwrap backend is currently local-only and is not offered as a public online service. For the free V2 path, use the project repository, releases, library, or CLI.</p></aside>
+</div></section>
+<section class="section"><div class="wrap"><div class="section-intro"><span class="eyebrow">A known upgrade concern</span><h2>Oracle 23ai/26ai and PLS-01918</h2><p>By default, Oracle 23ai/26ai reports PLS-01918 for code wrapped with wrap 9.2 or older. That is not a universal claim for every database or configuration. If the source is missing, identify the wrap format before choosing a recovery path.</p></div>
+<div class="callout warning"><p><strong>Do not send source code with an initial inquiry.</strong> For commercial recovery, the customer must demonstrate lawful rights to the code. Written confirmation and an NDA are required before work begins. Oracle internal packages and third-party code must not be submitted without authorization.</p></div>
+</div></section>
+<section class="section"><div class="wrap">
+<div class="section-intro"><span class="eyebrow">Learn and share</span><h2>Resources for your next step</h2><p>Use these materials to understand the format boundary, the missing-source problem, and the practical recovery options.</p></div>
+<div class="grid">
+<article class="card"><div class="card-kicker">Background</div><h3>When Wrapped PL/SQL Is All That Remains</h3><p>A longer overview of format support, common operational pain points, and what recovery can and cannot return.</p><a href="article.html">Read the article →</a></article>
+<article class="card"><div class="card-kicker">5–8 minute talk</div><h3>Presentation outline</h3><p>A static, printable narrative for a call, meetup, internal review, or later carousel adaptation.</p><a href="presentation.html">Open the slides →</a></article>
+<article class="card"><div class="card-kicker">Project</div><h3>Open-source V2 path</h3><p>Browse documentation, Maven coordinates, and native releases in the project repository.</p><a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">View releases →</a></article>
+</div></div></section>
+<section class="section"><div class="wrap author-card"><div><span class="eyebrow">V1 · bulk · complex recovery</span><h2>Discuss an eligible case with Andrey</h2><p class="muted">Recovery work is considered only when you can demonstrate lawful rights to the code; written confirmation and an NDA are required.</p></div><div class="actions"><a class="button" href="mailto:ashindarev@gmail.com">Email Andrey</a><a class="button secondary" href="https://www.linkedin.com/in/ashindarev/">Connect on LinkedIn</a></div></div></section>
+</main>
+<footer class="site-footer"><div class="wrap footer-row">
+<div><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">PL</span><span>Oracle PL/SQL Unwrapper</span></a><p>Free open-source V2 support, with an honest route for V1 and complex cases.</p><p class="small">This static site does not host the unwrap backend.</p></div>
+<div><div class="footer-links"><a href="https://github.com/sftwnd/oracle-plsql-unwrapper">Repository</a><a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Releases</a><a href="article.html">Article</a><a href="presentation.html">Presentation</a><a href="mailto:ashindarev@gmail.com">Email</a><a href="https://www.linkedin.com/in/ashindarev/">LinkedIn</a></div><p class="small">Maven: <code>com.github.sftwnd:oracle-plsql-unwrapper:1.0.0</code> · BSD-3-Clause</p></div>
+</div></footer>
+</body></html>

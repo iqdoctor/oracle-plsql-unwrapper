@@ -31,13 +31,14 @@
 
 **Speaker notes:** Direct developers to the repository and release page for usage details. V2 does not record the original PL/SQL version.
 
-## Slide 5 — A focused web workflow
+## Slide 5 — A local single-object demo
+- Optional web interface runs locally from the repository
 - Paste one wrapped object or upload one .sql/.plb file
 - Confirm lawful rights before submitting
 - V2 returns readable source and a short status
-- No source execution; no public bulk UI
+- No public hosted web service or bulk interface
 
-**Speaker notes:** A single script with multiple wrapped objects is directed to the CLI. The tool processes a request in memory, does not write submitted source to disk or log its contents, and is designed not to retain the request after the response. Do not claim physical memory zeroization.
+**Speaker notes:** The demo is local-only; public V2 access is through the library, CLI, and releases. A script with multiple wrapped objects should use the CLI. The local tool processes a request in memory, does not write submitted source to disk or log its contents, and is designed not to retain the request after the response. Do not claim physical memory zeroization.
 
 ## Slide 6 — Oracle 23ai/26ai and PLS-01918
 - By default, code wrapped with wrap 9.2 or older reports PLS-01918 on Oracle 23ai/26ai
@@ -68,7 +69,7 @@
 - Do not submit Oracle internal packages or unauthorized third-party code
 - Start with V2, use the CLI for local multi-object scripts, or contact the author for eligible complex work
 
-**Speaker notes:** The web checkbox is an attestation, not proof of rights or legal advice. Keep the next step practical and non-aggressive.
+**Speaker notes:** The local demo's rights checkbox is an attestation, not proof of rights or legal advice. Keep the next step practical and non-aggressive.
 
 ## Slide 10 — Links
 - Repository: https://github.com/sftwnd/oracle-plsql-unwrapper

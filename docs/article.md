@@ -18,11 +18,11 @@ The project is available as `com.github.sftwnd:oracle-plsql-unwrapper:1.0.0` on 
 
 ## The free V2 route
 
-For a single supported V2 object, the open-source project restores readable PL/SQL. The library can also process SQL scripts containing wrapped units, making the CLI useful for local multi-object work. A lightweight web tool is intended for a single object per request; it does not offer a public bulk-processing interface.
+For a single supported V2 object, the open-source project restores readable PL/SQL. The library can also process SQL scripts containing wrapped units, making the CLI useful for local multi-object work. The repository includes a local-only web demo for one object per request; it is not hosted as a public online service. Use the CLI for multi-object scripts.
 
 The V2 format does not record the original PL/SQL version. The result is the source representation retained by WRAP, not a reconstruction of every detail of the original file. In particular, comments and original formatting are usually lost. Program logic and identifiers may be recovered, but the output should not be presented as a byte-for-byte restoration of the original source.
 
-The web tool is designed to process submitted code in request memory without writing it to disk or logging its contents. It does not execute recovered code. A user must confirm lawful rights to submit the code and must not submit Oracle internal packages or third-party code without authorization. That checkbox is an attestation; it is not an independent verification of ownership.
+When run locally, the web demo processes submitted code in request memory without writing it to disk or logging its contents. It does not execute recovered code. A user must confirm lawful rights to submit the code and must not submit Oracle internal packages or third-party code without authorization. That checkbox is an attestation; it is not an independent verification of ownership.
 
 ## Why older wrapped code can matter during an upgrade
 
@@ -60,4 +60,4 @@ For more background, see [Unwrap Oracle PL/SQL 2.2+](https://www.linkedin.com/pu
 
 ## A practical next step
 
-First identify whether the object is V1 or V2. For V2, try the free library, CLI, or single-object web tool. For V1 and complex requests, ask about the case before planning recovery. In either path, preserve the distinction between readable recovered logic and the original source file—and establish rights to the code before any commercial work begins.
+First identify whether the object is V1 or V2. For V2, use the free library or CLI; the repository's single-object web demo can also be run locally. For V1 and complex requests, ask about the case before planning recovery. In either path, preserve the distinction between readable recovered logic and the original source file—and establish rights to the code before any commercial work begins.

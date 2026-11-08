@@ -2,9 +2,9 @@
 
 ## A free, open-source option for V2
 
-Oracle PL/SQL Unwrapper restores readable source from Oracle wrap format V2, used by Oracle 10g and later. Use the public tool for a single V2 object, or use the Java library and command-line interface in your own workflow.
+Oracle PL/SQL Unwrapper restores readable source from Oracle wrap format V2, used by Oracle 10g and later. Use the free Java library or command-line interface from the project repository and releases. The repository also contains a local-only web demo; no public web service is currently hosted.
 
-[Open the single-object V2 tool](#try-a-single-object)
+[Browse the repository and releases](https://github.com/sftwnd/oracle-plsql-unwrapper/releases)
 
 [View the project on GitHub](https://github.com/sftwnd/oracle-plsql-unwrapper) · [Browse releases](https://github.com/sftwnd/oracle-plsql-unwrapper/releases) · [Find the Maven artifact](https://central.sonatype.com/artifact/com.github.sftwnd/oracle-plsql-unwrapper)
 
@@ -17,13 +17,13 @@ Oracle PL/SQL Unwrapper restores readable source from Oracle wrap format V2, use
 
 V2 records no PL/SQL version. The restored text reflects the form stored by WRAP; it is not a byte-for-byte copy of the original source. Program logic and identifiers can be recovered, while comments and original formatting are usually lost.
 
-## Try a single object
+## Local web demo: run it yourself
 
-The web tool is intended for one wrapped object per request. Paste the wrapped PL/SQL or select one `.sql` or `.plb` file. The tool identifies V1 or V2, unwraps a supported V2 object, and returns a short status with the result or next step.
+The repository includes a local-only web demo for one wrapped object per request. It is not an online service. To run it locally, follow the instructions in `tool/README.md` in the checked-out project. When running, paste wrapped PL/SQL or select one `.sql` or `.plb` file; the tool identifies V1 or V2, unwraps a supported V2 object, and returns a short status with the result or next step.
 
 Before submitting, confirm that you have lawful rights to the code. Do not submit Oracle internal packages or third-party code unless you are authorized to do so. Submitted source is processed in request memory; it is not written to disk or included in content logs, and the tool does not execute recovered code.
 
-For local scripts containing multiple wrapped objects, use the command-line interface. The web tool does not provide a bulk-processing interface.
+For scripts containing multiple wrapped objects, use the command-line interface. The local demo does not provide a bulk-processing interface.
 
 ## When V1 or a complex case is involved
 
@@ -38,7 +38,7 @@ The author's service covers wrapped PL/SQL from 7.2 through 26ai+, including dif
 
 ## Oracle 23ai/26ai and PLS-01918
 
-By default, Oracle 23ai/26ai reports PLS-01918 for code wrapped with wrap 9.2 or older. This is not a universal outcome for every database or configuration. If the source is missing, the free V2 tool is not the solution for V1 code; contact the author to discuss whether the case is eligible for recovery.
+By default, Oracle 23ai/26ai reports PLS-01918 for code wrapped with wrap 9.2 or older. This is not a universal outcome for every database or configuration. If the source is missing, the free V2 project is not the solution for V1 code; contact the author to discuss whether the case is eligible for recovery.
 
 ## Common situations
 

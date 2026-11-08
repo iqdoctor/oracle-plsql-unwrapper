@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="What to do when only Oracle-wrapped PL/SQL remains: V2 open-source options, V1 limits, PLS-01918 context, and rights-first recovery.">
+<meta name="theme-color" content="#102532"><meta property="og:type" content="article"><meta property="og:title" content="When Wrapped PL/SQL Is All That Remains"><meta property="og:description" content="A practical guide to Oracle wrap formats, the free V2 project, and recovery paths for complex cases."><meta property="og:url" content="https://unwrap.iqdoctor.pro/article.html"><meta property="og:site_name" content="Oracle PL/SQL Unwrapper"><meta name="twitter:card" content="summary">
+<title>When Wrapped PL/SQL Is All That Remains — Oracle PL/SQL Unwrapper</title>
+<link rel="canonical" href="https://unwrap.iqdoctor.pro/article.html"><link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-row">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">PL</span><span>Oracle PL/SQL Unwrapper</span></a>
+<nav class="nav" aria-label="Main navigation"><a href="index.html">Overview</a><a href="article.html" aria-current="page">Article</a><a href="presentation.html">Presentation</a><a href="https://github.com/sftwnd/oracle-plsql-unwrapper">Repository</a></nav>
+</div></header>
+<main id="main">
+<section class="hero"><article class="wrap prose">
+<span class="eyebrow">Technical and operational guide</span><h1>When Wrapped PL/SQL Is All That Remains</h1>
+<p class="article-lede">A package has been running in a database for years, but the source is no longer where anyone expects it to be. The project may be closed, a repository may be missing, or the contractor who maintained the code may no longer be available. The database object is still there, but its source appears as wrapped text.</p>
+<div class="article-meta">Oracle PL/SQL Unwrapper · Open-source V2 project and professional recovery paths</div>
+</article></section>
+<article class="section prose">
+<h2>Start with the format</h2>
+<p>Oracle wrap files use two formats relevant to this discussion. The public Oracle PL/SQL Unwrapper project supports V2, used from Oracle 10g onward through 26ai+. It recognizes V1, used by Oracle 7.2–9.2, but does not unwrap it.</p>
+<p>That distinction matters. A V2 file can be handled with the free open-source Java library, command-line interface, or native release. V1 follows a different path: the public project reports that it is not implemented and provides the author's contact details. The V1 format is not part of the open-source unwrapping implementation, and this article does not describe or reproduce a V1 method.</p>
+<p>The project is available as <code>com.github.sftwnd:oracle-plsql-unwrapper:1.0.0</code> on Maven Central under the BSD-3-Clause license. It requires Java 8 or later to run. The repository and releases provide the library, command-line distribution, and native binaries.</p>
+<ul><li><a href="https://github.com/sftwnd/oracle-plsql-unwrapper">Project repository</a></li><li><a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Releases and native binaries</a></li><li><a href="https://central.sonatype.com/artifact/com.github.sftwnd/oracle-plsql-unwrapper">Maven Central artifact</a></li></ul>
+
+<h2>The free V2 route</h2>
+<p>For a supported V2 object, the open-source project restores readable PL/SQL. The CLI can be used with local scripts containing wrapped units. This site does not provide a public unwrap service; use the repository, releases, library, or CLI for the free V2 path.</p>
+<p>The V2 format does not record the original PL/SQL version. The result is the source representation retained by WRAP, not a reconstruction of every detail of the original file. Comments and original formatting are usually lost. Program logic and identifiers can be recovered, but the output should not be presented as a byte-for-byte restoration of the original source.</p>
+
+<h2>Why older wrapped code can matter during an upgrade</h2>
+<p>A practical issue described in Andrey Shindarev's article is PLS-01918 on Oracle 23ai/26ai. By default, those database versions report this error for code wrapped with wrap 9.2 or older. “By default” is important: this is not a claim that every installation or configuration behaves identically.</p>
+<p>If the original source is available, it can be used to prepare code for the target environment. If it is not available, the age and format of the wrapped object determine what recovery path may be relevant. The free V2 project does not unwrap V1, so it is not the tool for a 7.2–9.2 object.</p>
+
+<h2>Other reasons to look for the source</h2>
+<ul>
+<li><strong>A project has ended.</strong> The database object remains in use, but the source repository or development environment is gone.</li>
+<li><strong>A migration is planned.</strong> Conversion tools cannot work from wrapped code as if it were ordinary readable source.</li>
+<li><strong>An audit or legacy change is due.</strong> Teams may need to review or maintain logic that was not preserved in source control.</li>
+<li><strong>A database upgrade exposes old assumptions.</strong> An older wrap format may behave differently on a newer Oracle Database release.</li>
+</ul>
+<p>These situations do not all have the same answer. A V2 object can be tried with the open-source project. V1, bulk recovery, or a complex environment calls for a direct discussion before work is scoped.</p>
+
+<h2>What recovery returns—and what it does not</h2>
+<p>For commercial recovery work, Andrey can handle wrapped PL/SQL across versions 7.2 through 26ai+, including difficult V1 cases and bulk requests. If requested, code can also be re-wrapped for a specified Oracle Server version, but not for a version older than the original code. Re-wrapping is not an automatic downgrade path.</p>
+<p>The expected recovery is program logic and identifiers. Comments and original formatting are usually not available because they are not preserved in the wrapped representation. A recovered file should be reviewed and validated in the customer's environment before it is treated as a maintained source baseline.</p>
+
+<h2>Rights come first</h2>
+<p>Recovery work is accepted only when the customer can demonstrate lawful rights to the code. Before work begins, that basis is recorded in writing with a confirmation of rights and an NDA. Oracle internal packages or another party's code must not be submitted without authorization. Do not send code with an initial inquiry.</p>
+<p>If you have a V2 object, start with the free project. If the file is V1, you are addressing PLS-01918 on Oracle 23ai/26ai, the request is for many objects, or the case is otherwise complex, contact Andrey with the Oracle version, approximate object count, and basis for rights to the code. Do not send the source until eligibility and handling have been discussed.</p>
+<p>For more background, see <a href="https://www.linkedin.com/pulse/unwrap-oracle-plsql-22-andrey-shindarev-vv2xf">Unwrap Oracle PL/SQL 2.2+</a>.</p>
+<div class="author-card"><div><span class="eyebrow">V1 · bulk · complex recovery</span><h3>Contact Andrey Shindarev</h3><p class="muted">Commercial work requires demonstrated rights, written confirmation, and an NDA.</p></div>
+<div class="actions"><a class="button" href="mailto:ashindarev@gmail.com">Email Andrey</a><a class="button secondary" href="https://www.linkedin.com/in/ashindarev/">LinkedIn</a></div></div>
+<p class="disclaimer">This resource explains the project's published support boundary and a separate professional service. It is not a guarantee that a particular object can be recovered.</p>
+</article>
+</main>
+<footer class="site-footer"><div class="wrap footer-row">
+<div><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">PL</span><span>Oracle PL/SQL Unwrapper</span></a><p>Free V2 capability and clear routing for cases beyond it.</p></div>
+<div class="footer-links"><a href="index.html">Overview</a><a href="presentation.html">Presentation</a><a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Releases</a><a href="mailto:ashindarev@gmail.com">Email Andrey</a><a href="https://www.linkedin.com/in/ashindarev/">LinkedIn</a></div>
+</div></footer>
+</body></html>
