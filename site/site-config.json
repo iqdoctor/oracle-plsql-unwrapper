@@ -1,4 +1,8 @@
 {
-  "intendedPublicOrigin": "https://unwrap.iqdoctor.pro",
-  "purpose": "Intended-origin manifest for static-site metadata only; this file does not configure DNS, Cloudflare, or deployment."
+  "intendedPublicBaseUrl": "https://iqdoctor.github.io/oracle-plsql-unwrapper/",
+  "deploymentTarget": "GitHub Pages",
+  "publishedDirectory": "site/",
+  "backendIncluded": false,
+  "customDomain": null,
+  "purpose": "Informational manifest only; GitHub Actions publishes the static site and no backend is included."
 }

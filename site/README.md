@@ -10,18 +10,18 @@ From the repository root, run:
 
 Open http://127.0.0.1:8091/. Stop only this temporary static-preview process after testing. Do not stop the existing local tool backend if one is running on 127.0.0.1:8080.
 
-## Future static hosting
+## GitHub Pages
 
-- Configure the static host's output/root directory as site/.
-- No framework build step is required; index.html is the root entry point.
-- Intended public origin: https://unwrap.iqdoctor.pro.
-- site-config.json is an informational intended-origin manifest only. It does not configure Cloudflare, DNS, certificates, or a custom-domain binding.
-- Do not place tool/backend/, secrets, source submissions, or runtime data in this directory.
-- Before publication, separately verify Cloudflare project setup, account access, custom-domain association, DNS, TLS, and the final public copy. None of those operations has been performed by this repository content.
+- Public URL: https://iqdoctor.github.io/oracle-plsql-unwrapper/.
+- `.github/workflows/publish-static-pages.yml` deploys only this `site/` directory through GitHub Actions; no framework build step is required.
+- The repository's Pages publishing source must be set to **GitHub Actions**.
+- This is a project site on the `github.io` domain. No custom domain, Cloudflare, backend, or DNS configuration is used.
+- Do not place `tool/backend/`, secrets, submitted source, or runtime data in this directory.
 
 ## Pages
 
 - index.html — overview and resource hub
+- tool.html — static paste/upload and result-panel preview; no backend is connected
 - article.html — long-form article
 - presentation.html — ten-slide static presentation with visible speaker notes
 - assets/site.css — shared responsive, keyboard-focus, and print styles

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Preview the Oracle PL/SQL V2 unwrapper interface. The static preview has no connected backend.">
+<meta name="theme-color" content="#10192b">
+<meta property="og:type" content="website"><meta property="og:title" content="Oracle PL/SQL V2 Unwrapper"><meta property="og:description" content="Preview the paste/upload and result panels for the local V2 tool."><meta property="og:url" content="https://iqdoctor.github.io/oracle-plsql-unwrapper/tool.html"><meta property="og:site_name" content="Oracle PL/SQL Unwrapper">
+<title>Oracle PL/SQL V2 Unwrapper — Browser Preview</title>
+<link rel="canonical" href="https://iqdoctor.github.io/oracle-plsql-unwrapper/tool.html"><link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header"><div class="wrap header-row">
+<a class="brand" href="index.html" aria-label="Oracle PL/SQL Unwrapper home"><span class="brand-mark" aria-hidden="true">PL</span><span>Oracle PL/SQL Unwrapper</span></a>
+<nav class="nav" aria-label="Main navigation"><a href="index.html">V2 &amp; Recovery</a><a href="tool.html" aria-current="page">V2 Unwrapper</a><a href="article.html">Recovery Guide</a><a href="presentation.html">Project Briefing</a><a class="nav-github" href="https://github.com/sftwnd/oracle-plsql-unwrapper"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.47-.01.81.43.92.62.54.9 1.41.65 1.76.5.05-.39.21-.65.38-.8-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg><span>Repository</span></a></nav>
+</div></header>
+<main id="main">
+<section class="hero tool-hero"><div class="wrap">
+<span class="eyebrow">Single-object V2 workflow</span>
+<h1>Unwrap Oracle PL/SQL V2</h1>
+<p class="lede">Paste one wrapped object or choose a <code>.sql</code> / <code>.plb</code> file.</p>
+<div class="callout warning preview-warning" role="status" aria-label="Backend offline. Preview only; code is not submitted."><strong>Preview only · No backend connected</strong></div>
+</div></section>
+<section class="section tool-section"><div class="wrap">
+<div class="tool-grid">
+<section class="tool-panel" aria-labelledby="input-title">
+<div class="panel-heading"><div><span class="eyebrow">Step 1</span><h2 id="input-title">Provide one wrapped object</h2></div><span class="status-chip">Not submitted</span></div>
+<label class="field-label" for="wrapped-source">Paste wrapped PL/SQL</label>
+<textarea id="wrapped-source" name="source" rows="8" placeholder="Paste one wrapped PL/SQL object here…" spellcheck="false" autocomplete="off"></textarea>
+<div class="or-divider"><span>or choose one file</span></div>
+<label class="file-picker" for="wrapped-file"><span><strong>Select a file</strong><small>.sql or .plb · single file</small></span><input id="wrapped-file" type="file" accept=".sql,.plb,text/plain"></label>
+<p class="field-hint">For scripts containing multiple wrapped objects, use the CLI.</p>
+<label class="rights-check"><input type="checkbox" disabled><span>I confirm that I have lawful rights to this code and will not submit Oracle internal packages or third-party code without authorization.</span></label>
+<button class="button submit-button" type="button" disabled>Unwrap it! <span aria-hidden="true">→</span></button>
+<p class="preview-note">Nothing entered or selected on this preview page is transmitted. For a working V2 path, use the free Java library or CLI.</p>
+</section>
+<section class="tool-panel result-panel" aria-labelledby="result-title" aria-live="polite">
+<div class="panel-heading"><div><span class="eyebrow">Step 2</span><h2 id="result-title">Result</h2></div><span class="status-chip neutral">Waiting for input</span></div>
+<div class="result-summary"><span class="result-icon" aria-hidden="true">—</span><div><strong>No result yet</strong><p>A connected local backend would report the detected format and object type here.</p></div></div>
+<div class="result-meta"><div><span>Detected format</span><strong>Not detected</strong></div><div><span>Object type</span><strong>Not available</strong></div></div>
+<label class="field-label" for="unwrapped-source">Readable source</label>
+<textarea id="unwrapped-source" rows="8" placeholder="Restored V2 source would appear here…" readonly></textarea>
+<p class="field-hint">Recovered logic and identifiers may be available; comments and original formatting are usually lost.</p>
+</section>
+</div>
+</div></section>
+<section class="section"><div class="wrap author-card"><div><span class="eyebrow">V1 · bulk · complex recovery</span><h2>Need help with a different case?</h2><p class="muted">The open-source project recognizes V1 but does not unwrap it. Recovery work requires demonstrated rights to the code.</p></div><div class="actions"><a class="button" href="mailto:ashindarev@gmail.com">Email Andrey</a><a class="button secondary" href="https://www.linkedin.com/in/ashindarev/">LinkedIn</a></div></div></section>
+</main>
+<footer class="site-footer"><div class="wrap footer-row"><div><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">PL</span><span>Oracle PL/SQL Unwrapper</span></a><p class="small">Static interface preview · no unwrap backend connected.</p></div><div class="footer-links"><a href="index.html">V2 &amp; Recovery</a><a href="article.html">Recovery Guide</a><a href="presentation.html">Project Briefing</a><a href="https://github.com/sftwnd/oracle-plsql-unwrapper/releases">Free V2 Releases</a></div></div></footer>
+</body></html>
