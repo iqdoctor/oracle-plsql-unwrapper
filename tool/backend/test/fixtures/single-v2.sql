@@ -1,0 +1,28 @@
+create or replace procedure stray_cr wrapped
+a000000
+1
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+abcd
+7
+53f 1a1
+T04DRVoF9FfF/Kn5tyAd9c3PEh8wgxB3DPbWZ45A7uIdOigDglWOcl++VCkVot5ECjwReGNa
+oXTzFGuMTI6bhhO6hAzky33gMItHBqR/oYZYu0Mmluwrqs8fmWKsvn30arZvoX059y9kSHsS
+wF6tyOhCHm59bNCCmphRJrVTT86Cz7XKX1xcsWNvG4jLZvShOMJ8sn/wfPB/Lnwx1LUWEtog
+x5JV75EV6+fqZnH0uGwVjefqZnH0uGwVjYVAFFKy9PZacYQGq9OxyJAq9esYRYOJc4de0WET
+Q1JSEO6chGBf8IgTfMkLXhsL23WRWX/Jf9+RXylRddEYKVF10SuAnK6GO0zqI0K8cj0zDMQe
+hgZzoDETInJtV3LxepgFnekEovmP/se0zdEHpPn1P12teCQq3FTi
+
+/
