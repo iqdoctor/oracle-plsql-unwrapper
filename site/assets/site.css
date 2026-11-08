@@ -319,6 +319,11 @@ main {
     border-radius: var(--radius);
     background: #fff
 }
+.author-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .75rem 1rem
+}
 .site-footer {
     padding: 2.2rem 0;
     color: #cbd5e1;

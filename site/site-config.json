@@ -4,5 +4,7 @@
   "publishedDirectory": "site/",
   "backendIncluded": false,
   "customDomain": null,
-  "purpose": "Informational manifest only; GitHub Actions publishes the static site and no backend is included."
+  "purpose": "Informational manifest only; GitHub Actions publishes the static site and no backend is included.",
+  "defaultPage": "tool.html",
+  "aboutPage": "landing.html"
 }

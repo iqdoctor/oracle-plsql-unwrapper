@@ -20,8 +20,9 @@ Open http://127.0.0.1:8091/. Stop only this temporary static-preview process aft
 
 ## Pages
 
-- index.html — overview and resource hub
-- tool.html — static paste/upload and result-panel preview; no backend is connected
-- article.html — long-form article
-- presentation.html — ten-slide static presentation with visible speaker notes
+- index.html — GitHub Pages root; redirects to the tool page
+- tool.html — OPS Unwrapper paste/upload and result preview; backend is not connected
+- landing.html — About page for V2 support and recovery options
+- article.html — “When Wrapped PL/SQL Is All That Remains”
+- presentation.html — “From Wrapped Code to Readable PL/SQL” brief
 - assets/site.css — shared responsive, keyboard-focus, and print styles
