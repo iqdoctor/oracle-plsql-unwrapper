@@ -6,5 +6,6 @@
   "customDomain": null,
   "purpose": "Informational manifest only; GitHub Actions publishes the static site and no backend is included.",
   "defaultPage": "tool.html",
-  "aboutPage": "landing.html"
+  "aboutPage": "landing.html",
+  "siteName": "OPS V2 Unwrapper"
 }
